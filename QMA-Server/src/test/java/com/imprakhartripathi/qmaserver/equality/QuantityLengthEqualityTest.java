@@ -49,6 +49,130 @@ class QuantityLengthEqualityTest {
     }
 
     @Test
+    void testEquality_YardToYard_SameValue() {
+        QuantityLengthEquality.QuantityLength first =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS);
+        QuantityLengthEquality.QuantityLength second =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertTrue(first.equals(second), "Expected identical yard measurements to be equal");
+    }
+
+    @Test
+    void testEquality_YardToYard_DifferentValue() {
+        QuantityLengthEquality.QuantityLength first =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS);
+        QuantityLengthEquality.QuantityLength second =
+                new QuantityLengthEquality.QuantityLength(2.0, QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertFalse(first.equals(second), "Expected different yard measurements to be unequal");
+    }
+
+    @Test
+    void testEquality_YardToFeet_EquivalentValue() {
+        QuantityLengthEquality.QuantityLength yards =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS);
+        QuantityLengthEquality.QuantityLength feet =
+                new QuantityLengthEquality.QuantityLength(3.0, QuantityLengthEquality.LengthUnit.FEET);
+
+        assertTrue(yards.equals(feet), "Expected 1.0 yard to be equal to 3.0 feet");
+    }
+
+    @Test
+    void testEquality_FeetToYard_EquivalentValue() {
+        QuantityLengthEquality.QuantityLength feet =
+                new QuantityLengthEquality.QuantityLength(3.0, QuantityLengthEquality.LengthUnit.FEET);
+        QuantityLengthEquality.QuantityLength yards =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertTrue(feet.equals(yards), "Expected 3.0 feet to be equal to 1.0 yard");
+    }
+
+    @Test
+    void testEquality_YardToInches_EquivalentValue() {
+        QuantityLengthEquality.QuantityLength yards =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS);
+        QuantityLengthEquality.QuantityLength inches =
+                new QuantityLengthEquality.QuantityLength(36.0, QuantityLengthEquality.LengthUnit.INCH);
+
+        assertTrue(yards.equals(inches), "Expected 1.0 yard to be equal to 36.0 inches");
+    }
+
+    @Test
+    void testEquality_InchesToYard_EquivalentValue() {
+        QuantityLengthEquality.QuantityLength inches =
+                new QuantityLengthEquality.QuantityLength(36.0, QuantityLengthEquality.LengthUnit.INCH);
+        QuantityLengthEquality.QuantityLength yards =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertTrue(inches.equals(yards), "Expected 36.0 inches to be equal to 1.0 yard");
+    }
+
+    @Test
+    void testEquality_YardToFeet_NonEquivalentValue() {
+        QuantityLengthEquality.QuantityLength yards =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS);
+        QuantityLengthEquality.QuantityLength feet =
+                new QuantityLengthEquality.QuantityLength(2.0, QuantityLengthEquality.LengthUnit.FEET);
+
+        assertFalse(yards.equals(feet), "Expected 1.0 yard not to be equal to 2.0 feet");
+    }
+
+    @Test
+    void testEquality_CentimetersToCentimeters_SameValue() {
+        QuantityLengthEquality.QuantityLength first =
+                new QuantityLengthEquality.QuantityLength(2.0, QuantityLengthEquality.LengthUnit.CENTIMETERS);
+        QuantityLengthEquality.QuantityLength second =
+                new QuantityLengthEquality.QuantityLength(2.0, QuantityLengthEquality.LengthUnit.CENTIMETERS);
+
+        assertTrue(first.equals(second), "Expected identical centimeter measurements to be equal");
+    }
+
+    @Test
+    void testEquality_CentimetersToCentimeters_DifferentValue() {
+        QuantityLengthEquality.QuantityLength first =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.CENTIMETERS);
+        QuantityLengthEquality.QuantityLength second =
+                new QuantityLengthEquality.QuantityLength(2.0, QuantityLengthEquality.LengthUnit.CENTIMETERS);
+
+        assertFalse(first.equals(second), "Expected different centimeter measurements to be unequal");
+    }
+
+    @Test
+    void testEquality_CentimetersToInches_EquivalentValue() {
+        QuantityLengthEquality.QuantityLength centimeters =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.CENTIMETERS);
+        QuantityLengthEquality.QuantityLength inches =
+                new QuantityLengthEquality.QuantityLength(0.393701, QuantityLengthEquality.LengthUnit.INCH);
+
+        assertTrue(centimeters.equals(inches), "Expected 1.0 cm to be equal to 0.393701 inch");
+    }
+
+    @Test
+    void testEquality_CentimetersToFeet_NonEquivalentValue() {
+        QuantityLengthEquality.QuantityLength centimeters =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.CENTIMETERS);
+        QuantityLengthEquality.QuantityLength feet =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.FEET);
+
+        assertFalse(centimeters.equals(feet), "Expected 1.0 cm not to be equal to 1.0 ft");
+    }
+
+    @Test
+    void testEquality_MultiUnit_TransitiveProperty() {
+        QuantityLengthEquality.QuantityLength yards =
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS);
+        QuantityLengthEquality.QuantityLength feet =
+                new QuantityLengthEquality.QuantityLength(3.0, QuantityLengthEquality.LengthUnit.FEET);
+        QuantityLengthEquality.QuantityLength inches =
+                new QuantityLengthEquality.QuantityLength(36.0, QuantityLengthEquality.LengthUnit.INCH);
+
+        assertTrue(yards.equals(feet), "Expected 1.0 yard to be equal to 3.0 feet");
+        assertTrue(feet.equals(inches), "Expected 3.0 feet to be equal to 36.0 inches");
+        assertTrue(yards.equals(inches), "Expected 1.0 yard to be equal to 36.0 inches");
+    }
+
+    @Test
     void testEquality_FeetToFeet_DifferentValue() {
         QuantityLengthEquality.QuantityLength first =
                 new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.FEET);

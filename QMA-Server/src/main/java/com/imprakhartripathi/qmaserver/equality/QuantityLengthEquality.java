@@ -6,7 +6,9 @@ public class QuantityLengthEquality {
 
     public enum LengthUnit {
         FEET(1.0),
-        INCH(1.0 / 12.0);
+        INCH(1.0 / 12.0),
+        YARDS(3.0),
+        CENTIMETERS(0.393701 / 12.0);
 
         private final double toFeetFactor;
 
@@ -67,5 +69,13 @@ public class QuantityLengthEquality {
         System.out.println("Output: Equal (" + areEqual(1.0, LengthUnit.FEET, 12.0, LengthUnit.INCH) + ")");
         System.out.println("Input: Quantity(1.0, \"inch\") and Quantity(1.0, \"inch\")");
         System.out.println("Output: Equal (" + areEqual(1.0, LengthUnit.INCH, 1.0, LengthUnit.INCH) + ")");
+        System.out.println("Input: Quantity(1.0, YARDS) and Quantity(3.0, FEET)");
+        System.out.println("Output: Equal (" + areEqual(1.0, LengthUnit.YARDS, 3.0, LengthUnit.FEET) + ")");
+        System.out.println("Input: Quantity(1.0, YARDS) and Quantity(36.0, INCHES)");
+        System.out.println("Output: Equal (" + areEqual(1.0, LengthUnit.YARDS, 36.0, LengthUnit.INCH) + ")");
+        System.out.println("Input: Quantity(2.0, CENTIMETERS) and Quantity(2.0, CENTIMETERS)");
+        System.out.println("Output: Equal (" + areEqual(2.0, LengthUnit.CENTIMETERS, 2.0, LengthUnit.CENTIMETERS) + ")");
+        System.out.println("Input: Quantity(1.0, CENTIMETERS) and Quantity(0.393701, INCHES)");
+        System.out.println("Output: Equal (" + areEqual(1.0, LengthUnit.CENTIMETERS, 0.393701, LengthUnit.INCH) + ")");
     }
 }
