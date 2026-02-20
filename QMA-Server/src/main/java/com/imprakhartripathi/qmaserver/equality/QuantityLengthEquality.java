@@ -11,7 +11,7 @@ public class QuantityLengthEquality {
         FEET(1.0),
         INCH(1.0 / 12.0),
         YARDS(3.0),
-        CENTIMETERS(0.393701 / 12.0);
+        CENTIMETERS(1.0 / 30.48);
 
         private final double toFeetFactor;
 
@@ -50,6 +50,14 @@ public class QuantityLengthEquality {
             return unit.toFeet(value);
         }
 
+        public double getValue() {
+            return value;
+        }
+
+        public LengthUnit getUnit() {
+            return unit;
+        }
+
         public QuantityLength convertTo(LengthUnit targetUnit) {
             if (targetUnit == null) {
                 throw new IllegalArgumentException("Target unit must not be null");
@@ -57,6 +65,15 @@ public class QuantityLengthEquality {
             double valueInFeet = valueInFeet();
             double converted = targetUnit.fromFeet(valueInFeet);
             return new QuantityLength(converted, targetUnit);
+        }
+
+        public QuantityLength add(QuantityLength other) {
+            if (other == null) {
+                throw new IllegalArgumentException("Length to add must not be null");
+            }
+            double totalFeet = this.valueInFeet() + other.valueInFeet();
+            double converted = this.unit.fromFeet(totalFeet);
+            return new QuantityLength(converted, this.unit);
         }
 
         @Override
@@ -106,6 +123,19 @@ public class QuantityLengthEquality {
         return length.convertTo(targetUnit).value;
     }
 
+    public static QuantityLength add(QuantityLength first, QuantityLength second) {
+        if (first == null || second == null) {
+            throw new IllegalArgumentException("Lengths must not be null");
+        }
+        return first.add(second);
+    }
+
+    public static QuantityLength add(double firstValue, LengthUnit firstUnit,
+                                     double secondValue, LengthUnit secondUnit) {
+        return new QuantityLength(firstValue, firstUnit)
+                .add(new QuantityLength(secondValue, secondUnit));
+    }
+
     public static void main(String[] args) {
         System.out.println("Input: Quantity(1.0, \"feet\") and Quantity(12.0, \"inches\")");
         System.out.println("Output: Equal (" + areEqual(1.0, LengthUnit.FEET, 12.0, LengthUnit.INCH) + ")");
@@ -127,5 +157,8 @@ public class QuantityLengthEquality {
         System.out.println("Output: " + convert(36.0, LengthUnit.INCH, LengthUnit.YARDS));
         System.out.println("Input: convert(1.0, CENTIMETERS, INCHES)");
         System.out.println("Output: " + convert(1.0, LengthUnit.CENTIMETERS, LengthUnit.INCH));
+        System.out.println("Input: add(Quantity(1.0, FEET), Quantity(12.0, INCHES))");
+        System.out.println("Output: " + add(new QuantityLength(1.0, LengthUnit.FEET),
+                new QuantityLength(12.0, LengthUnit.INCH)));
     }
 }

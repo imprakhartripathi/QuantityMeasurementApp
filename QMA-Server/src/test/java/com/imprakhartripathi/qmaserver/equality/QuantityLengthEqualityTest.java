@@ -144,11 +144,11 @@ class QuantityLengthEqualityTest {
     @Test
     void testEquality_CentimetersToInches_EquivalentValue() {
         QuantityLengthEquality.QuantityLength centimeters =
-                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.CENTIMETERS);
+                new QuantityLengthEquality.QuantityLength(2.54, QuantityLengthEquality.LengthUnit.CENTIMETERS);
         QuantityLengthEquality.QuantityLength inches =
-                new QuantityLengthEquality.QuantityLength(0.393701, QuantityLengthEquality.LengthUnit.INCH);
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.INCH);
 
-        assertTrue(centimeters.equals(inches), "Expected 1.0 cm to be equal to 0.393701 inch");
+        assertTrue(centimeters.equals(inches), "Expected 2.54 cm to be equal to 1.0 inch");
     }
 
     @Test
@@ -329,4 +329,123 @@ class QuantityLengthEqualityTest {
                         QuantityLengthEquality.LengthUnit.INCH),
                 "Expected infinite value to be rejected");
     }
+
+    @Test
+    void testAddition_SameUnit_FeetPlusFeet() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(2.0, QuantityLengthEquality.LengthUnit.FEET));
+
+        assertEquals(3.0, result.getValue(), EPSILON, "Expected 1.0 ft + 2.0 ft = 3.0 ft");
+    }
+
+    @Test
+    void testAddition_SameUnit_InchPlusInch() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(6.0, QuantityLengthEquality.LengthUnit.INCH),
+                new QuantityLengthEquality.QuantityLength(6.0, QuantityLengthEquality.LengthUnit.INCH));
+
+        assertEquals(12.0, result.getValue(), EPSILON, "Expected 6.0 in + 6.0 in = 12.0 in");
+    }
+
+    @Test
+    void testAddition_CrossUnit_FeetPlusInches() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(12.0, QuantityLengthEquality.LengthUnit.INCH));
+
+        assertEquals(2.0, result.getValue(), EPSILON, "Expected 1.0 ft + 12.0 in = 2.0 ft");
+    }
+
+    @Test
+    void testAddition_CrossUnit_InchPlusFeet() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(12.0, QuantityLengthEquality.LengthUnit.INCH),
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.FEET));
+
+        assertEquals(24.0, result.getValue(), EPSILON, "Expected 12.0 in + 1.0 ft = 24.0 in");
+    }
+
+    @Test
+    void testAddition_CrossUnit_YardPlusFeet() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.YARDS),
+                new QuantityLengthEquality.QuantityLength(3.0, QuantityLengthEquality.LengthUnit.FEET));
+
+        assertEquals(2.0, result.getValue(), EPSILON, "Expected 1.0 yd + 3.0 ft = 2.0 yd");
+    }
+
+    @Test
+    void testAddition_CrossUnit_CentimeterPlusInch() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(2.54, QuantityLengthEquality.LengthUnit.CENTIMETERS),
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.INCH));
+
+        assertEquals(5.08, result.getValue(), EPSILON, "Expected 2.54 cm + 1.0 in = 5.08 cm");
+    }
+
+    @Test
+    void testAddition_Commutativity() {
+        QuantityLengthEquality.QuantityLength first = new QuantityLengthEquality.QuantityLength(
+                1.0, QuantityLengthEquality.LengthUnit.FEET);
+        QuantityLengthEquality.QuantityLength second = new QuantityLengthEquality.QuantityLength(
+                12.0, QuantityLengthEquality.LengthUnit.INCH);
+
+        QuantityLengthEquality.QuantityLength resultFirst = QuantityLengthEquality.add(first, second);
+        QuantityLengthEquality.QuantityLength resultSecond = QuantityLengthEquality.add(second, first);
+
+        double firstInFeet = QuantityLengthEquality.convert(resultFirst.getValue(), resultFirst.getUnit(),
+                QuantityLengthEquality.LengthUnit.FEET);
+        double secondInFeet = QuantityLengthEquality.convert(resultSecond.getValue(), resultSecond.getUnit(),
+                QuantityLengthEquality.LengthUnit.FEET);
+
+        assertEquals(firstInFeet, secondInFeet, EPSILON, "Expected addition to be commutative in result value");
+    }
+
+    @Test
+    void testAddition_WithZero() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(5.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(0.0, QuantityLengthEquality.LengthUnit.INCH));
+
+        assertEquals(5.0, result.getValue(), EPSILON, "Expected adding zero to preserve value");
+    }
+
+    @Test
+    void testAddition_NegativeValues() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(5.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(-2.0, QuantityLengthEquality.LengthUnit.FEET));
+
+        assertEquals(3.0, result.getValue(), EPSILON, "Expected 5.0 ft + -2.0 ft = 3.0 ft");
+    }
+
+    @Test
+    void testAddition_NullSecondOperand() {
+        QuantityLengthEquality.QuantityLength first = new QuantityLengthEquality.QuantityLength(
+                1.0, QuantityLengthEquality.LengthUnit.FEET);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> QuantityLengthEquality.add(first, null),
+                "Expected null operand to be rejected");
+    }
+
+    @Test
+    void testAddition_LargeValues() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(1e6, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(1e6, QuantityLengthEquality.LengthUnit.FEET));
+
+        assertEquals(2e6, result.getValue(), EPSILON, "Expected large values to add correctly");
+    }
+
+    @Test
+    void testAddition_SmallValues() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(0.001, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(0.002, QuantityLengthEquality.LengthUnit.FEET));
+
+        assertEquals(0.003, result.getValue(), EPSILON, "Expected small values to add correctly");
+    }
+
 }
