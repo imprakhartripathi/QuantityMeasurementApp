@@ -2,11 +2,14 @@ package com.imprakhartripathi.qmaserver.equality;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class QuantityLengthEqualityTest {
+
+    private static final double EPSILON = 1e-6;
 
     @Test
     void testEquality_FeetToFeet_SameValue() {
@@ -220,5 +223,110 @@ class QuantityLengthEqualityTest {
         assertThrows(IllegalArgumentException.class,
                 () -> new QuantityLengthEquality.QuantityLength(Double.NaN, QuantityLengthEquality.LengthUnit.FEET),
                 "Expected NaN value to be rejected");
+    }
+
+    @Test
+    void testConversion_FeetToInches() {
+        double result = QuantityLengthEquality.convert(1.0,
+                QuantityLengthEquality.LengthUnit.FEET, QuantityLengthEquality.LengthUnit.INCH);
+
+        assertEquals(12.0, result, EPSILON, "Expected 1.0 ft to convert to 12.0 inches");
+    }
+
+    @Test
+    void testConversion_InchesToFeet() {
+        double result = QuantityLengthEquality.convert(24.0,
+                QuantityLengthEquality.LengthUnit.INCH, QuantityLengthEquality.LengthUnit.FEET);
+
+        assertEquals(2.0, result, EPSILON, "Expected 24.0 inches to convert to 2.0 feet");
+    }
+
+    @Test
+    void testConversion_YardsToInches() {
+        double result = QuantityLengthEquality.convert(1.0,
+                QuantityLengthEquality.LengthUnit.YARDS, QuantityLengthEquality.LengthUnit.INCH);
+
+        assertEquals(36.0, result, EPSILON, "Expected 1.0 yard to convert to 36.0 inches");
+    }
+
+    @Test
+    void testConversion_InchesToYards() {
+        double result = QuantityLengthEquality.convert(72.0,
+                QuantityLengthEquality.LengthUnit.INCH, QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertEquals(2.0, result, EPSILON, "Expected 72.0 inches to convert to 2.0 yards");
+    }
+
+    @Test
+    void testConversion_CentimetersToInches() {
+        double result = QuantityLengthEquality.convert(2.54,
+                QuantityLengthEquality.LengthUnit.CENTIMETERS, QuantityLengthEquality.LengthUnit.INCH);
+
+        assertEquals(1.0, result, EPSILON, "Expected 2.54 cm to convert to 1.0 inch");
+    }
+
+    @Test
+    void testConversion_FeetToYards() {
+        double result = QuantityLengthEquality.convert(6.0,
+                QuantityLengthEquality.LengthUnit.FEET, QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertEquals(2.0, result, EPSILON, "Expected 6.0 feet to convert to 2.0 yards");
+    }
+
+    @Test
+    void testConversion_RoundTrip_PreservesValue() {
+        double value = 3.5;
+        double toInches = QuantityLengthEquality.convert(value,
+                QuantityLengthEquality.LengthUnit.FEET, QuantityLengthEquality.LengthUnit.INCH);
+        double backToFeet = QuantityLengthEquality.convert(toInches,
+                QuantityLengthEquality.LengthUnit.INCH, QuantityLengthEquality.LengthUnit.FEET);
+
+        assertEquals(value, backToFeet, EPSILON, "Expected round-trip conversion to preserve value");
+    }
+
+    @Test
+    void testConversion_ZeroValue() {
+        double result = QuantityLengthEquality.convert(0.0,
+                QuantityLengthEquality.LengthUnit.FEET, QuantityLengthEquality.LengthUnit.INCH);
+
+        assertEquals(0.0, result, EPSILON, "Expected zero value to remain zero after conversion");
+    }
+
+    @Test
+    void testConversion_NegativeValue() {
+        double result = QuantityLengthEquality.convert(-1.0,
+                QuantityLengthEquality.LengthUnit.FEET, QuantityLengthEquality.LengthUnit.INCH);
+
+        assertEquals(-12.0, result, EPSILON, "Expected negative value to preserve sign after conversion");
+    }
+
+    @Test
+    void testConversion_SameUnit() {
+        double result = QuantityLengthEquality.convert(5.0,
+                QuantityLengthEquality.LengthUnit.FEET, QuantityLengthEquality.LengthUnit.FEET);
+
+        assertEquals(5.0, result, EPSILON, "Expected same-unit conversion to return original value");
+    }
+
+    @Test
+    void testConversion_InvalidUnit_Throws() {
+        assertThrows(IllegalArgumentException.class,
+                () -> QuantityLengthEquality.convert(1.0, null, QuantityLengthEquality.LengthUnit.FEET),
+                "Expected null source unit to be rejected");
+        assertThrows(IllegalArgumentException.class,
+                () -> QuantityLengthEquality.convert(1.0, QuantityLengthEquality.LengthUnit.FEET, null),
+                "Expected null target unit to be rejected");
+    }
+
+    @Test
+    void testConversion_NaNOrInfinite_Throws() {
+        assertThrows(IllegalArgumentException.class,
+                () -> QuantityLengthEquality.convert(Double.NaN, QuantityLengthEquality.LengthUnit.FEET,
+                        QuantityLengthEquality.LengthUnit.INCH),
+                "Expected NaN value to be rejected");
+        assertThrows(IllegalArgumentException.class,
+                () -> QuantityLengthEquality.convert(Double.POSITIVE_INFINITY, QuantityLengthEquality.LengthUnit.FEET,
+                        QuantityLengthEquality.LengthUnit.INCH),
+                "Expected infinite value to be rejected");
     }
 }
