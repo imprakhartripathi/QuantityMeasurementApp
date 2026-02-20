@@ -448,4 +448,146 @@ class QuantityLengthEqualityTest {
         assertEquals(0.003, result.getValue(), EPSILON, "Expected small values to add correctly");
     }
 
+    @Test
+    void testAddition_ExplicitTargetUnit_Feet() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(12.0, QuantityLengthEquality.LengthUnit.INCH),
+                QuantityLengthEquality.LengthUnit.FEET);
+
+        assertEquals(2.0, result.getValue(), EPSILON, "Expected explicit target unit feet result");
+        assertEquals(QuantityLengthEquality.LengthUnit.FEET, result.getUnit(),
+                "Expected result unit to be feet");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_Inches() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(12.0, QuantityLengthEquality.LengthUnit.INCH),
+                QuantityLengthEquality.LengthUnit.INCH);
+
+        assertEquals(24.0, result.getValue(), EPSILON, "Expected explicit target unit inches result");
+        assertEquals(QuantityLengthEquality.LengthUnit.INCH, result.getUnit(),
+                "Expected result unit to be inches");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_Yards() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(12.0, QuantityLengthEquality.LengthUnit.INCH),
+                QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertEquals(2.0 / 3.0, result.getValue(), EPSILON, "Expected explicit target unit yards result");
+        assertEquals(QuantityLengthEquality.LengthUnit.YARDS, result.getUnit(),
+                "Expected result unit to be yards");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_Centimeters() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.INCH),
+                new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.INCH),
+                QuantityLengthEquality.LengthUnit.CENTIMETERS);
+
+        assertEquals(5.08, result.getValue(), EPSILON, "Expected explicit target unit centimeters result");
+        assertEquals(QuantityLengthEquality.LengthUnit.CENTIMETERS, result.getUnit(),
+                "Expected result unit to be centimeters");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_SameAsFirstOperand() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(2.0, QuantityLengthEquality.LengthUnit.YARDS),
+                new QuantityLengthEquality.QuantityLength(3.0, QuantityLengthEquality.LengthUnit.FEET),
+                QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertEquals(3.0, result.getValue(), EPSILON, "Expected result in yards");
+        assertEquals(QuantityLengthEquality.LengthUnit.YARDS, result.getUnit(),
+                "Expected result unit to be yards");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_SameAsSecondOperand() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(2.0, QuantityLengthEquality.LengthUnit.YARDS),
+                new QuantityLengthEquality.QuantityLength(3.0, QuantityLengthEquality.LengthUnit.FEET),
+                QuantityLengthEquality.LengthUnit.FEET);
+
+        assertEquals(9.0, result.getValue(), EPSILON, "Expected result in feet");
+        assertEquals(QuantityLengthEquality.LengthUnit.FEET, result.getUnit(),
+                "Expected result unit to be feet");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_Commutativity() {
+        QuantityLengthEquality.QuantityLength first = new QuantityLengthEquality.QuantityLength(
+                1.0, QuantityLengthEquality.LengthUnit.FEET);
+        QuantityLengthEquality.QuantityLength second = new QuantityLengthEquality.QuantityLength(
+                12.0, QuantityLengthEquality.LengthUnit.INCH);
+
+        QuantityLengthEquality.QuantityLength resultFirst = QuantityLengthEquality.add(
+                first, second, QuantityLengthEquality.LengthUnit.YARDS);
+        QuantityLengthEquality.QuantityLength resultSecond = QuantityLengthEquality.add(
+                second, first, QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertEquals(resultFirst.getValue(), resultSecond.getValue(), EPSILON,
+                "Expected explicit-target addition to be commutative");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_WithZero() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(5.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(0.0, QuantityLengthEquality.LengthUnit.INCH),
+                QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertEquals(5.0 / 3.0, result.getValue(), EPSILON, "Expected result in yards with zero operand");
+        assertEquals(QuantityLengthEquality.LengthUnit.YARDS, result.getUnit(),
+                "Expected result unit to be yards");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_NegativeValues() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(5.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(-2.0, QuantityLengthEquality.LengthUnit.FEET),
+                QuantityLengthEquality.LengthUnit.INCH);
+
+        assertEquals(36.0, result.getValue(), EPSILON, "Expected negative values to add correctly");
+        assertEquals(QuantityLengthEquality.LengthUnit.INCH, result.getUnit(),
+                "Expected result unit to be inches");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_NullTargetUnit() {
+        assertThrows(IllegalArgumentException.class,
+                () -> QuantityLengthEquality.add(
+                        new QuantityLengthEquality.QuantityLength(1.0, QuantityLengthEquality.LengthUnit.FEET),
+                        new QuantityLengthEquality.QuantityLength(12.0, QuantityLengthEquality.LengthUnit.INCH),
+                        null),
+                "Expected null target unit to be rejected");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_LargeToSmallScale() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(1000.0, QuantityLengthEquality.LengthUnit.FEET),
+                new QuantityLengthEquality.QuantityLength(500.0, QuantityLengthEquality.LengthUnit.FEET),
+                QuantityLengthEquality.LengthUnit.INCH);
+
+        assertEquals(18000.0, result.getValue(), EPSILON, "Expected large values to convert to inches");
+    }
+
+    @Test
+    void testAddition_ExplicitTargetUnit_SmallToLargeScale() {
+        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
+                new QuantityLengthEquality.QuantityLength(12.0, QuantityLengthEquality.LengthUnit.INCH),
+                new QuantityLengthEquality.QuantityLength(12.0, QuantityLengthEquality.LengthUnit.INCH),
+                QuantityLengthEquality.LengthUnit.YARDS);
+
+        assertEquals(2.0 / 3.0, result.getValue(), EPSILON, "Expected inches to convert to yards");
+    }
+
 }
