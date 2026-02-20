@@ -5,30 +5,6 @@ import java.util.Objects;
 public class QuantityLengthEquality {
 
     /**
-     * Supported length units with conversion factors to feet.
-     */
-    public enum LengthUnit {
-        FEET(1.0),
-        INCH(1.0 / 12.0),
-        YARDS(3.0),
-        CENTIMETERS(1.0 / 30.48);
-
-        private final double toFeetFactor;
-
-        LengthUnit(double toFeetFactor) {
-            this.toFeetFactor = toFeetFactor;
-        }
-
-        public double toFeet(double value) {
-            return value * toFeetFactor;
-        }
-
-        public double fromFeet(double feetValue) {
-            return feetValue / toFeetFactor;
-        }
-    }
-
-    /**
      * Immutable value object representing a length with a unit.
      */
     public static final class QuantityLength {
@@ -47,7 +23,7 @@ public class QuantityLengthEquality {
         }
 
         private double valueInFeet() {
-            return unit.toFeet(value);
+            return unit.convertToBaseUnit(value);
         }
 
         public double getValue() {
@@ -63,7 +39,7 @@ public class QuantityLengthEquality {
                 throw new IllegalArgumentException("Target unit must not be null");
             }
             double valueInFeet = valueInFeet();
-            double converted = targetUnit.fromFeet(valueInFeet);
+            double converted = targetUnit.convertFromBaseUnit(valueInFeet);
             return new QuantityLength(converted, targetUnit);
         }
 
@@ -86,7 +62,7 @@ public class QuantityLengthEquality {
 
         private QuantityLength addToTarget(QuantityLength other, LengthUnit targetUnit) {
             double totalFeet = this.valueInFeet() + other.valueInFeet();
-            double converted = targetUnit.fromFeet(totalFeet);
+            double converted = targetUnit.convertFromBaseUnit(totalFeet);
             return new QuantityLength(converted, targetUnit);
         }
 
