@@ -13,162 +13,162 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testEquality_FeetToFeet_SameValue() {
-        QuantityLengthEquality.QuantityLength first =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLengthEquality.QuantityLength second =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> first =
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> second =
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET);
 
         assertTrue(first.equals(second), "Expected identical feet measurements to be equal");
     }
 
     @Test
     void testEquality_InchToInch_SameValue() {
-        QuantityLengthEquality.QuantityLength first =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.INCH);
-        QuantityLengthEquality.QuantityLength second =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.INCH);
+        Quantity<LengthUnit> first =
+                new Quantity<LengthUnit>(1.0, LengthUnit.INCH);
+        Quantity<LengthUnit> second =
+                new Quantity<LengthUnit>(1.0, LengthUnit.INCH);
 
         assertTrue(first.equals(second), "Expected identical inch measurements to be equal");
     }
 
     @Test
     void testEquality_FeetToInch_EquivalentValue() {
-        QuantityLengthEquality.QuantityLength feet =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLengthEquality.QuantityLength inches =
-                new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH);
+        Quantity<LengthUnit> feet =
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> inches =
+                new Quantity<LengthUnit>(12.0, LengthUnit.INCH);
 
         assertTrue(feet.equals(inches), "Expected 1.0 ft to be equal to 12.0 inch");
     }
 
     @Test
     void testEquality_InchToFeet_EquivalentValue() {
-        QuantityLengthEquality.QuantityLength inches =
-                new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH);
-        QuantityLengthEquality.QuantityLength feet =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> inches =
+                new Quantity<LengthUnit>(12.0, LengthUnit.INCH);
+        Quantity<LengthUnit> feet =
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET);
 
         assertTrue(inches.equals(feet), "Expected 12.0 inch to be equal to 1.0 ft");
     }
 
     @Test
     void testEquality_YardToYard_SameValue() {
-        QuantityLengthEquality.QuantityLength first =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS);
-        QuantityLengthEquality.QuantityLength second =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> first =
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> second =
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS);
 
         assertTrue(first.equals(second), "Expected identical yard measurements to be equal");
     }
 
     @Test
     void testEquality_YardToYard_DifferentValue() {
-        QuantityLengthEquality.QuantityLength first =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS);
-        QuantityLengthEquality.QuantityLength second =
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> first =
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> second =
+                new Quantity<LengthUnit>(2.0, LengthUnit.YARDS);
 
         assertFalse(first.equals(second), "Expected different yard measurements to be unequal");
     }
 
     @Test
     void testEquality_YardToFeet_EquivalentValue() {
-        QuantityLengthEquality.QuantityLength yards =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS);
-        QuantityLengthEquality.QuantityLength feet =
-                new QuantityLengthEquality.QuantityLength(3.0, LengthUnit.FEET);
+        Quantity<LengthUnit> yards =
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> feet =
+                new Quantity<LengthUnit>(3.0, LengthUnit.FEET);
 
         assertTrue(yards.equals(feet), "Expected 1.0 yard to be equal to 3.0 feet");
     }
 
     @Test
     void testEquality_FeetToYard_EquivalentValue() {
-        QuantityLengthEquality.QuantityLength feet =
-                new QuantityLengthEquality.QuantityLength(3.0, LengthUnit.FEET);
-        QuantityLengthEquality.QuantityLength yards =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> feet =
+                new Quantity<LengthUnit>(3.0, LengthUnit.FEET);
+        Quantity<LengthUnit> yards =
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS);
 
         assertTrue(feet.equals(yards), "Expected 3.0 feet to be equal to 1.0 yard");
     }
 
     @Test
     void testEquality_YardToInches_EquivalentValue() {
-        QuantityLengthEquality.QuantityLength yards =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS);
-        QuantityLengthEquality.QuantityLength inches =
-                new QuantityLengthEquality.QuantityLength(36.0, LengthUnit.INCH);
+        Quantity<LengthUnit> yards =
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> inches =
+                new Quantity<LengthUnit>(36.0, LengthUnit.INCH);
 
         assertTrue(yards.equals(inches), "Expected 1.0 yard to be equal to 36.0 inches");
     }
 
     @Test
     void testEquality_InchesToYard_EquivalentValue() {
-        QuantityLengthEquality.QuantityLength inches =
-                new QuantityLengthEquality.QuantityLength(36.0, LengthUnit.INCH);
-        QuantityLengthEquality.QuantityLength yards =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> inches =
+                new Quantity<LengthUnit>(36.0, LengthUnit.INCH);
+        Quantity<LengthUnit> yards =
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS);
 
         assertTrue(inches.equals(yards), "Expected 36.0 inches to be equal to 1.0 yard");
     }
 
     @Test
     void testEquality_YardToFeet_NonEquivalentValue() {
-        QuantityLengthEquality.QuantityLength yards =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS);
-        QuantityLengthEquality.QuantityLength feet =
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.FEET);
+        Quantity<LengthUnit> yards =
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> feet =
+                new Quantity<LengthUnit>(2.0, LengthUnit.FEET);
 
         assertFalse(yards.equals(feet), "Expected 1.0 yard not to be equal to 2.0 feet");
     }
 
     @Test
     void testEquality_CentimetersToCentimeters_SameValue() {
-        QuantityLengthEquality.QuantityLength first =
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.CENTIMETERS);
-        QuantityLengthEquality.QuantityLength second =
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.CENTIMETERS);
+        Quantity<LengthUnit> first =
+                new Quantity<LengthUnit>(2.0, LengthUnit.CENTIMETERS);
+        Quantity<LengthUnit> second =
+                new Quantity<LengthUnit>(2.0, LengthUnit.CENTIMETERS);
 
         assertTrue(first.equals(second), "Expected identical centimeter measurements to be equal");
     }
 
     @Test
     void testEquality_CentimetersToCentimeters_DifferentValue() {
-        QuantityLengthEquality.QuantityLength first =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.CENTIMETERS);
-        QuantityLengthEquality.QuantityLength second =
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.CENTIMETERS);
+        Quantity<LengthUnit> first =
+                new Quantity<LengthUnit>(1.0, LengthUnit.CENTIMETERS);
+        Quantity<LengthUnit> second =
+                new Quantity<LengthUnit>(2.0, LengthUnit.CENTIMETERS);
 
         assertFalse(first.equals(second), "Expected different centimeter measurements to be unequal");
     }
 
     @Test
     void testEquality_CentimetersToInches_EquivalentValue() {
-        QuantityLengthEquality.QuantityLength centimeters =
-                new QuantityLengthEquality.QuantityLength(2.54, LengthUnit.CENTIMETERS);
-        QuantityLengthEquality.QuantityLength inches =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.INCH);
+        Quantity<LengthUnit> centimeters =
+                new Quantity<LengthUnit>(2.54, LengthUnit.CENTIMETERS);
+        Quantity<LengthUnit> inches =
+                new Quantity<LengthUnit>(1.0, LengthUnit.INCH);
 
         assertTrue(centimeters.equals(inches), "Expected 2.54 cm to be equal to 1.0 inch");
     }
 
     @Test
     void testEquality_CentimetersToFeet_NonEquivalentValue() {
-        QuantityLengthEquality.QuantityLength centimeters =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.CENTIMETERS);
-        QuantityLengthEquality.QuantityLength feet =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> centimeters =
+                new Quantity<LengthUnit>(1.0, LengthUnit.CENTIMETERS);
+        Quantity<LengthUnit> feet =
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET);
 
         assertFalse(centimeters.equals(feet), "Expected 1.0 cm not to be equal to 1.0 ft");
     }
 
     @Test
     void testEquality_MultiUnit_TransitiveProperty() {
-        QuantityLengthEquality.QuantityLength yards =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS);
-        QuantityLengthEquality.QuantityLength feet =
-                new QuantityLengthEquality.QuantityLength(3.0, LengthUnit.FEET);
-        QuantityLengthEquality.QuantityLength inches =
-                new QuantityLengthEquality.QuantityLength(36.0, LengthUnit.INCH);
+        Quantity<LengthUnit> yards =
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS);
+        Quantity<LengthUnit> feet =
+                new Quantity<LengthUnit>(3.0, LengthUnit.FEET);
+        Quantity<LengthUnit> inches =
+                new Quantity<LengthUnit>(36.0, LengthUnit.INCH);
 
         assertTrue(yards.equals(feet), "Expected 1.0 yard to be equal to 3.0 feet");
         assertTrue(feet.equals(inches), "Expected 3.0 feet to be equal to 36.0 inches");
@@ -177,36 +177,36 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testEquality_FeetToFeet_DifferentValue() {
-        QuantityLengthEquality.QuantityLength first =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLengthEquality.QuantityLength second =
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.FEET);
+        Quantity<LengthUnit> first =
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> second =
+                new Quantity<LengthUnit>(2.0, LengthUnit.FEET);
 
         assertFalse(first.equals(second), "Expected different feet measurements to be unequal");
     }
 
     @Test
     void testEquality_InchToInch_DifferentValue() {
-        QuantityLengthEquality.QuantityLength first =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.INCH);
-        QuantityLengthEquality.QuantityLength second =
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.INCH);
+        Quantity<LengthUnit> first =
+                new Quantity<LengthUnit>(1.0, LengthUnit.INCH);
+        Quantity<LengthUnit> second =
+                new Quantity<LengthUnit>(2.0, LengthUnit.INCH);
 
         assertFalse(first.equals(second), "Expected different inch measurements to be unequal");
     }
 
     @Test
     void testEquality_NullComparison() {
-        QuantityLengthEquality.QuantityLength value =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> value =
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET);
 
         assertFalse(value.equals(null), "Expected quantity not to be equal to null");
     }
 
     @Test
     void testEquality_SameReference() {
-        QuantityLengthEquality.QuantityLength value =
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> value =
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET);
 
         assertTrue(value.equals(value), "Expected quantity to be equal to itself");
     }
@@ -214,14 +214,14 @@ class QuantityLengthEqualityTest {
     @Test
     void testEquality_InvalidUnit() {
         assertThrows(IllegalArgumentException.class,
-                () -> new QuantityLengthEquality.QuantityLength(1.0, null),
+                () -> new Quantity<LengthUnit>(1.0, null),
                 "Expected null unit to be rejected");
     }
 
     @Test
     void testEquality_NonNumericInput() {
         assertThrows(IllegalArgumentException.class,
-                () -> new QuantityLengthEquality.QuantityLength(Double.NaN, LengthUnit.FEET),
+                () -> new Quantity<LengthUnit>(Double.NaN, LengthUnit.FEET),
                 "Expected NaN value to be rejected");
     }
 
@@ -332,67 +332,67 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_SameUnit_FeetPlusFeet() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.FEET));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(2.0, LengthUnit.FEET));
 
         assertEquals(3.0, result.getValue(), EPSILON, "Expected 1.0 ft + 2.0 ft = 3.0 ft");
     }
 
     @Test
     void testAddition_SameUnit_InchPlusInch() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(6.0, LengthUnit.INCH),
-                new QuantityLengthEquality.QuantityLength(6.0, LengthUnit.INCH));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(6.0, LengthUnit.INCH),
+                new Quantity<LengthUnit>(6.0, LengthUnit.INCH));
 
         assertEquals(12.0, result.getValue(), EPSILON, "Expected 6.0 in + 6.0 in = 12.0 in");
     }
 
     @Test
     void testAddition_CrossUnit_FeetPlusInches() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(12.0, LengthUnit.INCH));
 
         assertEquals(2.0, result.getValue(), EPSILON, "Expected 1.0 ft + 12.0 in = 2.0 ft");
     }
 
     @Test
     void testAddition_CrossUnit_InchPlusFeet() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH),
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(12.0, LengthUnit.INCH),
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET));
 
         assertEquals(24.0, result.getValue(), EPSILON, "Expected 12.0 in + 1.0 ft = 24.0 in");
     }
 
     @Test
     void testAddition_CrossUnit_YardPlusFeet() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.YARDS),
-                new QuantityLengthEquality.QuantityLength(3.0, LengthUnit.FEET));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(1.0, LengthUnit.YARDS),
+                new Quantity<LengthUnit>(3.0, LengthUnit.FEET));
 
         assertEquals(2.0, result.getValue(), EPSILON, "Expected 1.0 yd + 3.0 ft = 2.0 yd");
     }
 
     @Test
     void testAddition_CrossUnit_CentimeterPlusInch() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(2.54, LengthUnit.CENTIMETERS),
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.INCH));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(2.54, LengthUnit.CENTIMETERS),
+                new Quantity<LengthUnit>(1.0, LengthUnit.INCH));
 
         assertEquals(5.08, result.getValue(), EPSILON, "Expected 2.54 cm + 1.0 in = 5.08 cm");
     }
 
     @Test
     void testAddition_Commutativity() {
-        QuantityLengthEquality.QuantityLength first = new QuantityLengthEquality.QuantityLength(
+        Quantity<LengthUnit> first = new Quantity<LengthUnit>(
                 1.0, LengthUnit.FEET);
-        QuantityLengthEquality.QuantityLength second = new QuantityLengthEquality.QuantityLength(
+        Quantity<LengthUnit> second = new Quantity<LengthUnit>(
                 12.0, LengthUnit.INCH);
 
-        QuantityLengthEquality.QuantityLength resultFirst = QuantityLengthEquality.add(first, second);
-        QuantityLengthEquality.QuantityLength resultSecond = QuantityLengthEquality.add(second, first);
+        Quantity<LengthUnit> resultFirst = QuantityLengthEquality.add(first, second);
+        Quantity<LengthUnit> resultSecond = QuantityLengthEquality.add(second, first);
 
         double firstInFeet = QuantityLengthEquality.convert(resultFirst.getValue(), resultFirst.getUnit(),
                 LengthUnit.FEET);
@@ -404,25 +404,25 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_WithZero() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(5.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(0.0, LengthUnit.INCH));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(5.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(0.0, LengthUnit.INCH));
 
         assertEquals(5.0, result.getValue(), EPSILON, "Expected adding zero to preserve value");
     }
 
     @Test
     void testAddition_NegativeValues() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(5.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(-2.0, LengthUnit.FEET));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(5.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(-2.0, LengthUnit.FEET));
 
         assertEquals(3.0, result.getValue(), EPSILON, "Expected 5.0 ft + -2.0 ft = 3.0 ft");
     }
 
     @Test
     void testAddition_NullSecondOperand() {
-        QuantityLengthEquality.QuantityLength first = new QuantityLengthEquality.QuantityLength(
+        Quantity<LengthUnit> first = new Quantity<LengthUnit>(
                 1.0, LengthUnit.FEET);
 
         assertThrows(IllegalArgumentException.class,
@@ -432,27 +432,27 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_LargeValues() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(1e6, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(1e6, LengthUnit.FEET));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(1e6, LengthUnit.FEET),
+                new Quantity<LengthUnit>(1e6, LengthUnit.FEET));
 
         assertEquals(2e6, result.getValue(), EPSILON, "Expected large values to add correctly");
     }
 
     @Test
     void testAddition_SmallValues() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(0.001, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(0.002, LengthUnit.FEET));
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(0.001, LengthUnit.FEET),
+                new Quantity<LengthUnit>(0.002, LengthUnit.FEET));
 
         assertEquals(0.003, result.getValue(), EPSILON, "Expected small values to add correctly");
     }
 
     @Test
     void testAddition_ExplicitTargetUnit_Feet() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(12.0, LengthUnit.INCH),
                 LengthUnit.FEET);
 
         assertEquals(2.0, result.getValue(), EPSILON, "Expected explicit target unit feet result");
@@ -462,9 +462,9 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_ExplicitTargetUnit_Inches() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(12.0, LengthUnit.INCH),
                 LengthUnit.INCH);
 
         assertEquals(24.0, result.getValue(), EPSILON, "Expected explicit target unit inches result");
@@ -474,9 +474,9 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_ExplicitTargetUnit_Yards() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(1.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(12.0, LengthUnit.INCH),
                 LengthUnit.YARDS);
 
         assertEquals(2.0 / 3.0, result.getValue(), EPSILON, "Expected explicit target unit yards result");
@@ -486,9 +486,9 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_ExplicitTargetUnit_Centimeters() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.INCH),
-                new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.INCH),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(1.0, LengthUnit.INCH),
+                new Quantity<LengthUnit>(1.0, LengthUnit.INCH),
                 LengthUnit.CENTIMETERS);
 
         assertEquals(5.08, result.getValue(), EPSILON, "Expected explicit target unit centimeters result");
@@ -498,9 +498,9 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_ExplicitTargetUnit_SameAsFirstOperand() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.YARDS),
-                new QuantityLengthEquality.QuantityLength(3.0, LengthUnit.FEET),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(2.0, LengthUnit.YARDS),
+                new Quantity<LengthUnit>(3.0, LengthUnit.FEET),
                 LengthUnit.YARDS);
 
         assertEquals(3.0, result.getValue(), EPSILON, "Expected result in yards");
@@ -510,9 +510,9 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_ExplicitTargetUnit_SameAsSecondOperand() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(2.0, LengthUnit.YARDS),
-                new QuantityLengthEquality.QuantityLength(3.0, LengthUnit.FEET),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(2.0, LengthUnit.YARDS),
+                new Quantity<LengthUnit>(3.0, LengthUnit.FEET),
                 LengthUnit.FEET);
 
         assertEquals(9.0, result.getValue(), EPSILON, "Expected result in feet");
@@ -522,14 +522,14 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_ExplicitTargetUnit_Commutativity() {
-        QuantityLengthEquality.QuantityLength first = new QuantityLengthEquality.QuantityLength(
+        Quantity<LengthUnit> first = new Quantity<LengthUnit>(
                 1.0, LengthUnit.FEET);
-        QuantityLengthEquality.QuantityLength second = new QuantityLengthEquality.QuantityLength(
+        Quantity<LengthUnit> second = new Quantity<LengthUnit>(
                 12.0, LengthUnit.INCH);
 
-        QuantityLengthEquality.QuantityLength resultFirst = QuantityLengthEquality.add(
+        Quantity<LengthUnit> resultFirst = QuantityLengthEquality.add(
                 first, second, LengthUnit.YARDS);
-        QuantityLengthEquality.QuantityLength resultSecond = QuantityLengthEquality.add(
+        Quantity<LengthUnit> resultSecond = QuantityLengthEquality.add(
                 second, first, LengthUnit.YARDS);
 
         assertEquals(resultFirst.getValue(), resultSecond.getValue(), EPSILON,
@@ -538,9 +538,9 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_ExplicitTargetUnit_WithZero() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(5.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(0.0, LengthUnit.INCH),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(5.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(0.0, LengthUnit.INCH),
                 LengthUnit.YARDS);
 
         assertEquals(5.0 / 3.0, result.getValue(), EPSILON, "Expected result in yards with zero operand");
@@ -550,9 +550,9 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_ExplicitTargetUnit_NegativeValues() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(5.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(-2.0, LengthUnit.FEET),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(5.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(-2.0, LengthUnit.FEET),
                 LengthUnit.INCH);
 
         assertEquals(36.0, result.getValue(), EPSILON, "Expected negative values to add correctly");
@@ -564,17 +564,17 @@ class QuantityLengthEqualityTest {
     void testAddition_ExplicitTargetUnit_NullTargetUnit() {
         assertThrows(IllegalArgumentException.class,
                 () -> QuantityLengthEquality.add(
-                        new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET),
-                        new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH),
+                        new Quantity<LengthUnit>(1.0, LengthUnit.FEET),
+                        new Quantity<LengthUnit>(12.0, LengthUnit.INCH),
                         null),
                 "Expected null target unit to be rejected");
     }
 
     @Test
     void testAddition_ExplicitTargetUnit_LargeToSmallScale() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(1000.0, LengthUnit.FEET),
-                new QuantityLengthEquality.QuantityLength(500.0, LengthUnit.FEET),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(1000.0, LengthUnit.FEET),
+                new Quantity<LengthUnit>(500.0, LengthUnit.FEET),
                 LengthUnit.INCH);
 
         assertEquals(18000.0, result.getValue(), EPSILON, "Expected large values to convert to inches");
@@ -582,9 +582,9 @@ class QuantityLengthEqualityTest {
 
     @Test
     void testAddition_ExplicitTargetUnit_SmallToLargeScale() {
-        QuantityLengthEquality.QuantityLength result = QuantityLengthEquality.add(
-                new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH),
-                new QuantityLengthEquality.QuantityLength(12.0, LengthUnit.INCH),
+        Quantity<LengthUnit> result = QuantityLengthEquality.add(
+                new Quantity<LengthUnit>(12.0, LengthUnit.INCH),
+                new Quantity<LengthUnit>(12.0, LengthUnit.INCH),
                 LengthUnit.YARDS);
 
         assertEquals(2.0 / 3.0, result.getValue(), EPSILON, "Expected inches to convert to yards");

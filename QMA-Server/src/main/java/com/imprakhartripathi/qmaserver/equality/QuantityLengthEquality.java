@@ -1,132 +1,43 @@
 package com.imprakhartripathi.qmaserver.equality;
 
-import java.util.Objects;
-
 public class QuantityLengthEquality {
 
-    /**
-     * Immutable value object representing a length with a unit.
-     */
-    public static final class QuantityLength {
-        private final double value;
-        private final LengthUnit unit;
-
-        public QuantityLength(double value, LengthUnit unit) {
-            if (unit == null) {
-                throw new IllegalArgumentException("Unit must not be null");
-            }
-            if (Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException("Value must be a finite number");
-            }
-            this.value = value;
-            this.unit = unit;
-        }
-
-        private double valueInFeet() {
-            return unit.convertToBaseUnit(value);
-        }
-
-        public double getValue() {
-            return value;
-        }
-
-        public LengthUnit getUnit() {
-            return unit;
-        }
-
-        public QuantityLength convertTo(LengthUnit targetUnit) {
-            if (targetUnit == null) {
-                throw new IllegalArgumentException("Target unit must not be null");
-            }
-            double valueInFeet = valueInFeet();
-            double converted = targetUnit.convertFromBaseUnit(valueInFeet);
-            return new QuantityLength(converted, targetUnit);
-        }
-
-        public QuantityLength add(QuantityLength other) {
-            if (other == null) {
-                throw new IllegalArgumentException("Length to add must not be null");
-            }
-            return addToTarget(other, this.unit);
-        }
-
-        public QuantityLength add(QuantityLength other, LengthUnit targetUnit) {
-            if (other == null) {
-                throw new IllegalArgumentException("Length to add must not be null");
-            }
-            if (targetUnit == null) {
-                throw new IllegalArgumentException("Target unit must not be null");
-            }
-            return addToTarget(other, targetUnit);
-        }
-
-        private QuantityLength addToTarget(QuantityLength other, LengthUnit targetUnit) {
-            double totalFeet = this.valueInFeet() + other.valueInFeet();
-            double converted = targetUnit.convertFromBaseUnit(totalFeet);
-            return new QuantityLength(converted, targetUnit);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-            QuantityLength other = (QuantityLength) obj;
-            return Double.compare(this.valueInFeet(), other.valueInFeet()) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(valueInFeet());
-        }
-
-        @Override
-        public String toString() {
-            return "QuantityLength(" + value + ", " + unit + ")";
-        }
-    }
-
-    /**
-     * Converts a value between two length units.
-     */
     public static double convert(double value, LengthUnit sourceUnit, LengthUnit targetUnit) {
-        return new QuantityLength(value, sourceUnit).convertTo(targetUnit).value;
+        return new Quantity<>(value, sourceUnit).convertTo(targetUnit).getValue();
     }
 
     public static boolean areEqual(double firstValue, LengthUnit firstUnit,
                                    double secondValue, LengthUnit secondUnit) {
-        return new QuantityLength(firstValue, firstUnit)
-                .equals(new QuantityLength(secondValue, secondUnit));
+        return new Quantity<>(firstValue, firstUnit)
+                .equals(new Quantity<>(secondValue, secondUnit));
     }
 
     public static double demonstrateLengthConversion(double value, LengthUnit sourceUnit, LengthUnit targetUnit) {
         return convert(value, sourceUnit, targetUnit);
     }
 
-    public static double demonstrateLengthConversion(QuantityLength length, LengthUnit targetUnit) {
+    public static double demonstrateLengthConversion(Quantity<LengthUnit> length, LengthUnit targetUnit) {
         if (length == null) {
             throw new IllegalArgumentException("Length must not be null");
         }
-        return length.convertTo(targetUnit).value;
+        return length.convertTo(targetUnit).getValue();
     }
 
-    public static QuantityLength add(QuantityLength first, QuantityLength second) {
+    public static Quantity<LengthUnit> add(Quantity<LengthUnit> first, Quantity<LengthUnit> second) {
         if (first == null || second == null) {
             throw new IllegalArgumentException("Lengths must not be null");
         }
         return first.add(second);
     }
 
-    public static QuantityLength add(double firstValue, LengthUnit firstUnit,
-                                     double secondValue, LengthUnit secondUnit) {
-        return new QuantityLength(firstValue, firstUnit)
-                .add(new QuantityLength(secondValue, secondUnit));
+    public static Quantity<LengthUnit> add(double firstValue, LengthUnit firstUnit,
+                                           double secondValue, LengthUnit secondUnit) {
+        return new Quantity<>(firstValue, firstUnit)
+                .add(new Quantity<>(secondValue, secondUnit));
     }
 
-    public static QuantityLength add(QuantityLength first, QuantityLength second, LengthUnit targetUnit) {
+    public static Quantity<LengthUnit> add(Quantity<LengthUnit> first, Quantity<LengthUnit> second,
+                                           LengthUnit targetUnit) {
         if (first == null || second == null) {
             throw new IllegalArgumentException("Lengths must not be null");
         }
@@ -136,11 +47,11 @@ public class QuantityLengthEquality {
         return first.add(second, targetUnit);
     }
 
-    public static QuantityLength add(double firstValue, LengthUnit firstUnit,
-                                     double secondValue, LengthUnit secondUnit,
-                                     LengthUnit targetUnit) {
-        return new QuantityLength(firstValue, firstUnit)
-                .add(new QuantityLength(secondValue, secondUnit), targetUnit);
+    public static Quantity<LengthUnit> add(double firstValue, LengthUnit firstUnit,
+                                           double secondValue, LengthUnit secondUnit,
+                                           LengthUnit targetUnit) {
+        return new Quantity<>(firstValue, firstUnit)
+                .add(new Quantity<>(secondValue, secondUnit), targetUnit);
     }
 
     public static void main(String[] args) {
@@ -165,10 +76,10 @@ public class QuantityLengthEquality {
         System.out.println("Input: convert(1.0, CENTIMETERS, INCHES)");
         System.out.println("Output: " + convert(1.0, LengthUnit.CENTIMETERS, LengthUnit.INCH));
         System.out.println("Input: add(Quantity(1.0, FEET), Quantity(12.0, INCHES))");
-        System.out.println("Output: " + add(new QuantityLength(1.0, LengthUnit.FEET),
-                new QuantityLength(12.0, LengthUnit.INCH)));
+        System.out.println("Output: " + add(new Quantity<>(1.0, LengthUnit.FEET),
+                new Quantity<>(12.0, LengthUnit.INCH)));
         System.out.println("Input: add(Quantity(1.0, FEET), Quantity(12.0, INCHES), YARDS)");
-        System.out.println("Output: " + add(new QuantityLength(1.0, LengthUnit.FEET),
-                new QuantityLength(12.0, LengthUnit.INCH), LengthUnit.YARDS));
+        System.out.println("Output: " + add(new Quantity<>(1.0, LengthUnit.FEET),
+                new Quantity<>(12.0, LengthUnit.INCH), LengthUnit.YARDS));
     }
 }
