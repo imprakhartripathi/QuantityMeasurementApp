@@ -55,6 +55,37 @@ public final class Quantity<U extends IMeasurable> {
         return addToTarget(other, targetUnit);
     }
 
+    public Quantity<U> subtract(Quantity<U> other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Quantity to subtract must not be null");
+        }
+        return subtractToTarget(other, this.unit);
+    }
+
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+        if (other == null) {
+            throw new IllegalArgumentException("Quantity to subtract must not be null");
+        }
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit must not be null");
+        }
+        return subtractToTarget(other, targetUnit);
+    }
+
+    public double divide(Quantity<U> other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Quantity to divide by must not be null");
+        }
+        if (!unit.getClass().equals(other.unit.getClass())) {
+            throw new IllegalArgumentException("Cannot divide quantities of different categories");
+        }
+        double divisor = other.valueInBaseUnit();
+        if (Double.compare(divisor, 0.0) == 0) {
+            throw new ArithmeticException("Division by zero");
+        }
+        return this.valueInBaseUnit() / divisor;
+    }
+
     private Quantity<U> addToTarget(Quantity<U> other, U targetUnit) {
         if (!unit.getClass().equals(other.unit.getClass())) {
             throw new IllegalArgumentException("Cannot add quantities of different categories");
@@ -62,6 +93,19 @@ public final class Quantity<U extends IMeasurable> {
         double totalBase = this.valueInBaseUnit() + other.valueInBaseUnit();
         double converted = targetUnit.convertFromBaseUnit(totalBase);
         return new Quantity<>(converted, targetUnit);
+    }
+
+    private Quantity<U> subtractToTarget(Quantity<U> other, U targetUnit) {
+        if (!unit.getClass().equals(other.unit.getClass())) {
+            throw new IllegalArgumentException("Cannot subtract quantities of different categories");
+        }
+        double totalBase = this.valueInBaseUnit() - other.valueInBaseUnit();
+        double converted = targetUnit.convertFromBaseUnit(totalBase);
+        return new Quantity<>(roundTwoDecimals(converted), targetUnit);
+    }
+
+    private static double roundTwoDecimals(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 
     @Override
