@@ -29,6 +29,32 @@ public final class Quantity<U extends IMeasurable> {
         return unit.convertToBaseUnit(value);
     }
 
+    private enum ArithmeticOperation {
+        ADD {
+            @Override
+            double compute(double left, double right) {
+                return left + right;
+            }
+        },
+        SUBTRACT {
+            @Override
+            double compute(double left, double right) {
+                return left - right;
+            }
+        },
+        DIVIDE {
+            @Override
+            double compute(double left, double right) {
+                if (Double.compare(right, 0.0) == 0) {
+                    throw new ArithmeticException("Division by zero");
+                }
+                return left / right;
+            }
+        };
+
+        abstract double compute(double left, double right);
+    }
+
     public Quantity<U> convertTo(U targetUnit) {
         if (targetUnit == null) {
             throw new IllegalArgumentException("Target unit must not be null");
@@ -39,69 +65,66 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> add(Quantity<U> other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Quantity to add must not be null");
-        }
-        return addToTarget(other, this.unit);
+        return add(other, this.unit);
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
-        if (other == null) {
-            throw new IllegalArgumentException("Quantity to add must not be null");
-        }
-        if (targetUnit == null) {
-            throw new IllegalArgumentException("Target unit must not be null");
-        }
-        return addToTarget(other, targetUnit);
+        validateArithmeticOperands(other, targetUnit, ArithmeticOperation.ADD, "Quantity to add must not be null");
+        return buildResult(other, targetUnit, ArithmeticOperation.ADD, false);
     }
 
     public Quantity<U> subtract(Quantity<U> other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Quantity to subtract must not be null");
-        }
-        return subtractToTarget(other, this.unit);
+        return subtract(other, this.unit);
     }
 
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
-        if (other == null) {
-            throw new IllegalArgumentException("Quantity to subtract must not be null");
-        }
-        if (targetUnit == null) {
-            throw new IllegalArgumentException("Target unit must not be null");
-        }
-        return subtractToTarget(other, targetUnit);
+        validateArithmeticOperands(other, targetUnit, ArithmeticOperation.SUBTRACT,
+                "Quantity to subtract must not be null");
+        return buildResult(other, targetUnit, ArithmeticOperation.SUBTRACT, true);
     }
 
     public double divide(Quantity<U> other) {
+        validateArithmeticOperands(other, null, ArithmeticOperation.DIVIDE,
+                "Quantity to divide by must not be null");
+        return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
+    }
+
+    private void validateArithmeticOperands(Quantity<U> other, U targetUnit,
+                                            ArithmeticOperation operation, String nullOtherMessage) {
         if (other == null) {
-            throw new IllegalArgumentException("Quantity to divide by must not be null");
+            throw new IllegalArgumentException(nullOtherMessage);
         }
         if (!unit.getClass().equals(other.unit.getClass())) {
-            throw new IllegalArgumentException("Cannot divide quantities of different categories");
+            throw new IllegalArgumentException(crossCategoryMessage(operation));
         }
-        double divisor = other.valueInBaseUnit();
-        if (Double.compare(divisor, 0.0) == 0) {
-            throw new ArithmeticException("Division by zero");
+        if (Double.isNaN(other.value) || Double.isInfinite(other.value)) {
+            throw new IllegalArgumentException("Value must be a finite number");
         }
-        return this.valueInBaseUnit() / divisor;
+        if (operation != ArithmeticOperation.DIVIDE && targetUnit == null) {
+            throw new IllegalArgumentException("Target unit must not be null");
+        }
     }
 
-    private Quantity<U> addToTarget(Quantity<U> other, U targetUnit) {
-        if (!unit.getClass().equals(other.unit.getClass())) {
-            throw new IllegalArgumentException("Cannot add quantities of different categories");
-        }
-        double totalBase = this.valueInBaseUnit() + other.valueInBaseUnit();
-        double converted = targetUnit.convertFromBaseUnit(totalBase);
-        return new Quantity<>(converted, targetUnit);
+    private String crossCategoryMessage(ArithmeticOperation operation) {
+        return switch (operation) {
+            case ADD -> "Cannot add quantities of different categories";
+            case SUBTRACT -> "Cannot subtract quantities of different categories";
+            case DIVIDE -> "Cannot divide quantities of different categories";
+        };
     }
 
-    private Quantity<U> subtractToTarget(Quantity<U> other, U targetUnit) {
-        if (!unit.getClass().equals(other.unit.getClass())) {
-            throw new IllegalArgumentException("Cannot subtract quantities of different categories");
-        }
-        double totalBase = this.valueInBaseUnit() - other.valueInBaseUnit();
-        double converted = targetUnit.convertFromBaseUnit(totalBase);
-        return new Quantity<>(roundTwoDecimals(converted), targetUnit);
+    private double performBaseArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+        double left = this.valueInBaseUnit();
+        double right = other.valueInBaseUnit();
+        return operation.compute(left, right);
+    }
+
+    private Quantity<U> buildResult(Quantity<U> other, U targetUnit,
+                                    ArithmeticOperation operation, boolean round) {
+        double baseResult = performBaseArithmetic(other, operation);
+        double converted = targetUnit.convertFromBaseUnit(baseResult);
+        double finalValue = round ? roundTwoDecimals(converted) : converted;
+        return new Quantity<>(finalValue, targetUnit);
     }
 
     private static double roundTwoDecimals(double value) {
