@@ -7,7 +7,8 @@ public enum LengthUnit implements IMeasurable {
     FEET(1.0),
     INCH(1.0 / 12.0),
     YARDS(3.0),
-    CENTIMETERS(1.0 / 30.48);
+    CENTIMETERS(1.0 / 30.48),
+    METERS(3.280839895013123);
 
     private final double toFeetFactor;
 
@@ -33,5 +34,10 @@ public enum LengthUnit implements IMeasurable {
     @Override
     public String getUnitName() {
         return name();
+    }
+
+    @Override
+    public String getMeasurementType() {
+        return "LENGTH";
     }
 }

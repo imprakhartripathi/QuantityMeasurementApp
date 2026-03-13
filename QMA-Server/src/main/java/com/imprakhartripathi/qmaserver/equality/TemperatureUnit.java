@@ -38,6 +38,11 @@ public enum TemperatureUnit implements IMeasurable {
     }
 
     @Override
+    public String getMeasurementType() {
+        return "TEMPERATURE";
+    }
+
+    @Override
     public boolean supportsArithmetic() {
         return supportsArithmetic.isSupported();
     }

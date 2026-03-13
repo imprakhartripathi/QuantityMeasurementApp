@@ -33,4 +33,9 @@ public enum VolumeUnit implements IMeasurable {
     public String getUnitName() {
         return name();
     }
+
+    @Override
+    public String getMeasurementType() {
+        return "VOLUME";
+    }
 }
