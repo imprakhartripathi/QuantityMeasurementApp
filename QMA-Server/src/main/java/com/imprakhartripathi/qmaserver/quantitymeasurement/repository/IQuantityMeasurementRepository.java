@@ -9,5 +9,22 @@ public interface IQuantityMeasurementRepository {
 
     List<QuantityMeasurementEntity> getAllMeasurements();
 
-    void clear();
+    List<QuantityMeasurementEntity> getMeasurementsByOperation(String operationType);
+
+    List<QuantityMeasurementEntity> getMeasurementsByMeasurementType(String measurementType);
+
+    int getTotalCount();
+
+    void deleteAllMeasurements();
+
+    default void clear() {
+        deleteAllMeasurements();
+    }
+
+    default String getPoolStatistics() {
+        return "Connection pool statistics unavailable";
+    }
+
+    default void releaseResources() {
+    }
 }

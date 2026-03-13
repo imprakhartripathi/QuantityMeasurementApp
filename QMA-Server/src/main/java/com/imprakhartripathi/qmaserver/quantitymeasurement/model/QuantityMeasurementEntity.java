@@ -22,30 +22,42 @@ public class QuantityMeasurementEntity implements Serializable {
     private final String errorMessage;
 
     public QuantityMeasurementEntity(String operationType, QuantityDTO leftOperand, QuantityDTO resultQuantity) {
-        this(operationType, leftOperand, null, resultQuantity, null, null, false, null);
+        this(UUID.randomUUID().toString(), LocalDateTime.now(), operationType, leftOperand, null,
+                resultQuantity, null, null, false, null);
     }
 
     public QuantityMeasurementEntity(String operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
                                      QuantityDTO resultQuantity) {
-        this(operationType, leftOperand, rightOperand, resultQuantity, null, null, false, null);
+        this(UUID.randomUUID().toString(), LocalDateTime.now(), operationType, leftOperand, rightOperand,
+                resultQuantity, null, null, false, null);
     }
 
     public QuantityMeasurementEntity(String operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
                                      Boolean comparisonResult, Double scalarResult) {
-        this(operationType, leftOperand, rightOperand, null, comparisonResult, scalarResult, false, null);
+        this(UUID.randomUUID().toString(), LocalDateTime.now(), operationType, leftOperand, rightOperand,
+                null, comparisonResult, scalarResult, false, null);
     }
 
     public QuantityMeasurementEntity(String operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
                                      String errorMessage) {
-        this(operationType, leftOperand, rightOperand, null, null, null, true,
+        this(UUID.randomUUID().toString(), LocalDateTime.now(), operationType, leftOperand, rightOperand,
+                null, null, null, true,
                 Objects.requireNonNull(errorMessage, "Error message must not be null"));
     }
 
-    private QuantityMeasurementEntity(String operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
-                                      QuantityDTO resultQuantity, Boolean comparisonResult, Double scalarResult,
-                                      boolean error, String errorMessage) {
-        this.id = UUID.randomUUID().toString();
-        this.createdAt = LocalDateTime.now();
+    public static QuantityMeasurementEntity restore(String id, LocalDateTime createdAt, String operationType,
+                                                    QuantityDTO leftOperand, QuantityDTO rightOperand,
+                                                    QuantityDTO resultQuantity, Boolean comparisonResult,
+                                                    Double scalarResult, boolean error, String errorMessage) {
+        return new QuantityMeasurementEntity(id, createdAt, operationType, leftOperand, rightOperand, resultQuantity,
+                comparisonResult, scalarResult, error, errorMessage);
+    }
+
+    private QuantityMeasurementEntity(String id, LocalDateTime createdAt, String operationType,
+                                      QuantityDTO leftOperand, QuantityDTO rightOperand, QuantityDTO resultQuantity,
+                                      Boolean comparisonResult, Double scalarResult, boolean error, String errorMessage) {
+        this.id = Objects.requireNonNull(id, "Id must not be null");
+        this.createdAt = Objects.requireNonNull(createdAt, "Created at must not be null");
         this.operationType = Objects.requireNonNull(operationType, "Operation type must not be null");
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;

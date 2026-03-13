@@ -12,6 +12,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class QuantityMeasurementCacheRepository implements IQuantityMeasurementRepository, Serializable {
     @Serial
@@ -49,6 +52,33 @@ public final class QuantityMeasurementCacheRepository implements IQuantityMeasur
         persist();
     }
 
+    @Override
+    public synchronized List<QuantityMeasurementEntity> getMeasurementsByOperation(String operationType) {
+        String normalizedOperation = normalize(operationType);
+        return measurements.stream()
+                .filter(entity -> normalize(entity.getOperationType()).equals(normalizedOperation))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public synchronized List<QuantityMeasurementEntity> getMeasurementsByMeasurementType(String measurementType) {
+        String normalizedType = normalize(measurementType);
+        return measurements.stream()
+                .filter(entity -> entity.getLeftOperand() != null)
+                .filter(entity -> normalize(entity.getLeftOperand().getMeasurementType()).equals(normalizedType))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public synchronized int getTotalCount() {
+        return measurements.size();
+    }
+
+    @Override
+    public synchronized void deleteAllMeasurements() {
+        clear();
+    }
+
     @SuppressWarnings("unchecked")
     private List<QuantityMeasurementEntity> loadFromDisk() {
         if (!Files.exists(STORAGE_FILE)) {
@@ -74,5 +104,9 @@ public final class QuantityMeasurementCacheRepository implements IQuantityMeasur
         } catch (IOException exception) {
             throw new IllegalStateException("Failed to persist quantity measurements", exception);
         }
+    }
+
+    private String normalize(String value) {
+        return Objects.requireNonNull(value, "Value must not be null").trim().toUpperCase(Locale.ROOT);
     }
 }
