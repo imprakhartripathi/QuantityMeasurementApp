@@ -1,136 +1,321 @@
 package com.imprakhartripathi.qmaserver.quantitymeasurement.model;
 
-import java.io.Serial;
-import java.io.Serializable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+
 import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
 
-public class QuantityMeasurementEntity implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+@Entity
+@Table(name = "quantity_measurements",
+        indexes = {
+                @Index(name = "idx_quantity_measurements_operation", columnList = "operation_type"),
+                @Index(name = "idx_quantity_measurements_measurement", columnList = "left_measurement_type"),
+                @Index(name = "idx_quantity_measurements_created_at", columnList = "created_at")
+        })
+public class QuantityMeasurementEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final String id;
-    private final LocalDateTime createdAt;
-    private final String operationType;
-    private final QuantityDTO leftOperand;
-    private final QuantityDTO rightOperand;
-    private final QuantityDTO resultQuantity;
-    private final Boolean comparisonResult;
-    private final Double scalarResult;
-    private final boolean error;
-    private final String errorMessage;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
-    public QuantityMeasurementEntity(String operationType, QuantityDTO leftOperand, QuantityDTO resultQuantity) {
-        this(UUID.randomUUID().toString(), LocalDateTime.now(), operationType, leftOperand, null,
-                resultQuantity, null, null, false, null);
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "operation_type", nullable = false, length = 32)
+    private OperationType operationType;
+
+    @Column(name = "left_value", nullable = false)
+    private Double leftValue;
+
+    @Column(name = "left_unit", nullable = false, length = 32)
+    private String leftUnit;
+
+    @Column(name = "left_measurement_type", nullable = false, length = 32)
+    private String leftMeasurementType;
+
+    @Column(name = "right_value")
+    private Double rightValue;
+
+    @Column(name = "right_unit", length = 32)
+    private String rightUnit;
+
+    @Column(name = "right_measurement_type", length = 32)
+    private String rightMeasurementType;
+
+    @Column(name = "result_string", length = 255)
+    private String resultString;
+
+    @Column(name = "result_value")
+    private Double resultValue;
+
+    @Column(name = "result_unit", length = 32)
+    private String resultUnit;
+
+    @Column(name = "result_measurement_type", length = 32)
+    private String resultMeasurementType;
+
+    @Column(name = "comparison_result")
+    private Boolean comparisonResult;
+
+    @Column(name = "scalar_result")
+    private Double scalarResult;
+
+    @Column(name = "is_error", nullable = false)
+    private boolean error;
+
+    @Column(name = "error_message", length = 500)
+    private String errorMessage;
+
+    public QuantityMeasurementEntity() {
     }
 
-    public QuantityMeasurementEntity(String operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
+    public QuantityMeasurementEntity(OperationType operationType, QuantityDTO leftOperand, QuantityDTO resultQuantity) {
+        this.operationType = operationType;
+        applyLeftOperand(leftOperand);
+        applyResultQuantity(resultQuantity);
+        this.error = false;
+    }
+
+    public QuantityMeasurementEntity(OperationType operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
                                      QuantityDTO resultQuantity) {
-        this(UUID.randomUUID().toString(), LocalDateTime.now(), operationType, leftOperand, rightOperand,
-                resultQuantity, null, null, false, null);
+        this(operationType, leftOperand, resultQuantity);
+        applyRightOperand(rightOperand);
     }
 
-    public QuantityMeasurementEntity(String operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
+    public QuantityMeasurementEntity(OperationType operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
                                      Boolean comparisonResult, Double scalarResult) {
-        this(UUID.randomUUID().toString(), LocalDateTime.now(), operationType, leftOperand, rightOperand,
-                null, comparisonResult, scalarResult, false, null);
-    }
-
-    public QuantityMeasurementEntity(String operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
-                                     String errorMessage) {
-        this(UUID.randomUUID().toString(), LocalDateTime.now(), operationType, leftOperand, rightOperand,
-                null, null, null, true,
-                Objects.requireNonNull(errorMessage, "Error message must not be null"));
-    }
-
-    public static QuantityMeasurementEntity restore(String id, LocalDateTime createdAt, String operationType,
-                                                    QuantityDTO leftOperand, QuantityDTO rightOperand,
-                                                    QuantityDTO resultQuantity, Boolean comparisonResult,
-                                                    Double scalarResult, boolean error, String errorMessage) {
-        return new QuantityMeasurementEntity(id, createdAt, operationType, leftOperand, rightOperand, resultQuantity,
-                comparisonResult, scalarResult, error, errorMessage);
-    }
-
-    private QuantityMeasurementEntity(String id, LocalDateTime createdAt, String operationType,
-                                      QuantityDTO leftOperand, QuantityDTO rightOperand, QuantityDTO resultQuantity,
-                                      Boolean comparisonResult, Double scalarResult, boolean error, String errorMessage) {
-        this.id = Objects.requireNonNull(id, "Id must not be null");
-        this.createdAt = Objects.requireNonNull(createdAt, "Created at must not be null");
-        this.operationType = Objects.requireNonNull(operationType, "Operation type must not be null");
-        this.leftOperand = leftOperand;
-        this.rightOperand = rightOperand;
-        this.resultQuantity = resultQuantity;
+        this.operationType = operationType;
+        applyLeftOperand(leftOperand);
+        applyRightOperand(rightOperand);
         this.comparisonResult = comparisonResult;
         this.scalarResult = scalarResult;
-        this.error = error;
+        this.resultString = comparisonResult != null ? String.valueOf(comparisonResult) : null;
+        this.resultValue = scalarResult;
+        this.error = false;
+    }
+
+    public QuantityMeasurementEntity(OperationType operationType, QuantityDTO leftOperand, QuantityDTO rightOperand,
+                                     String errorMessage) {
+        this.operationType = operationType;
+        applyLeftOperand(leftOperand);
+        applyRightOperand(rightOperand);
+        this.error = true;
         this.errorMessage = errorMessage;
     }
 
-    public String getId() {
+    @PrePersist
+    void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        if (createdAt == null) {
+            createdAt = now;
+        }
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public String getOperationType() {
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public OperationType getOperationType() {
         return operationType;
     }
 
-    public QuantityDTO getLeftOperand() {
-        return leftOperand;
+    public void setOperationType(OperationType operationType) {
+        this.operationType = operationType;
     }
 
-    public QuantityDTO getRightOperand() {
-        return rightOperand;
+    public Double getLeftValue() {
+        return leftValue;
     }
 
-    public QuantityDTO getResultQuantity() {
-        return resultQuantity;
+    public void setLeftValue(Double leftValue) {
+        this.leftValue = leftValue;
+    }
+
+    public String getLeftUnit() {
+        return leftUnit;
+    }
+
+    public void setLeftUnit(String leftUnit) {
+        this.leftUnit = leftUnit;
+    }
+
+    public String getLeftMeasurementType() {
+        return leftMeasurementType;
+    }
+
+    public void setLeftMeasurementType(String leftMeasurementType) {
+        this.leftMeasurementType = leftMeasurementType;
+    }
+
+    public Double getRightValue() {
+        return rightValue;
+    }
+
+    public void setRightValue(Double rightValue) {
+        this.rightValue = rightValue;
+    }
+
+    public String getRightUnit() {
+        return rightUnit;
+    }
+
+    public void setRightUnit(String rightUnit) {
+        this.rightUnit = rightUnit;
+    }
+
+    public String getRightMeasurementType() {
+        return rightMeasurementType;
+    }
+
+    public void setRightMeasurementType(String rightMeasurementType) {
+        this.rightMeasurementType = rightMeasurementType;
+    }
+
+    public String getResultString() {
+        return resultString;
+    }
+
+    public void setResultString(String resultString) {
+        this.resultString = resultString;
+    }
+
+    public Double getResultValue() {
+        return resultValue;
+    }
+
+    public void setResultValue(Double resultValue) {
+        this.resultValue = resultValue;
+    }
+
+    public String getResultUnit() {
+        return resultUnit;
+    }
+
+    public void setResultUnit(String resultUnit) {
+        this.resultUnit = resultUnit;
+    }
+
+    public String getResultMeasurementType() {
+        return resultMeasurementType;
+    }
+
+    public void setResultMeasurementType(String resultMeasurementType) {
+        this.resultMeasurementType = resultMeasurementType;
     }
 
     public Boolean getComparisonResult() {
         return comparisonResult;
     }
 
+    public void setComparisonResult(Boolean comparisonResult) {
+        this.comparisonResult = comparisonResult;
+    }
+
     public Double getScalarResult() {
         return scalarResult;
+    }
+
+    public void setScalarResult(Double scalarResult) {
+        this.scalarResult = scalarResult;
+    }
+
+    public boolean isError() {
+        return error;
     }
 
     public boolean hasError() {
         return error;
     }
 
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }
 
-    @Override
-    public String toString() {
-        if (error) {
-            return "QuantityMeasurementEntity{" +
-                    "operationType='" + operationType + '\'' +
-                    ", errorMessage='" + errorMessage + '\'' +
-                    '}';
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public QuantityDTO getLeftOperand() {
+        return new QuantityDTO(leftValue, leftUnit, leftMeasurementType);
+    }
+
+    public QuantityDTO getRightOperand() {
+        if (rightValue == null || rightUnit == null || rightMeasurementType == null) {
+            return null;
         }
-        if (comparisonResult != null) {
-            return "QuantityMeasurementEntity{" +
-                    "operationType='" + operationType + '\'' +
-                    ", comparisonResult=" + comparisonResult +
-                    '}';
+        return new QuantityDTO(rightValue, rightUnit, rightMeasurementType);
+    }
+
+    public QuantityDTO getResultQuantity() {
+        if (resultValue == null || resultUnit == null || resultMeasurementType == null) {
+            return null;
         }
-        if (scalarResult != null) {
-            return "QuantityMeasurementEntity{" +
-                    "operationType='" + operationType + '\'' +
-                    ", scalarResult=" + scalarResult +
-                    '}';
+        return new QuantityDTO(resultValue, resultUnit, resultMeasurementType);
+    }
+
+    private void applyLeftOperand(QuantityDTO quantityDTO) {
+        this.leftValue = quantityDTO.getValue();
+        this.leftUnit = quantityDTO.getUnitName();
+        this.leftMeasurementType = quantityDTO.getMeasurementType();
+    }
+
+    private void applyRightOperand(QuantityDTO quantityDTO) {
+        if (quantityDTO == null) {
+            return;
         }
-        return "QuantityMeasurementEntity{" +
-                "operationType='" + operationType + '\'' +
-                ", resultQuantity=" + resultQuantity +
-                '}';
+        this.rightValue = quantityDTO.getValue();
+        this.rightUnit = quantityDTO.getUnitName();
+        this.rightMeasurementType = quantityDTO.getMeasurementType();
+    }
+
+    private void applyResultQuantity(QuantityDTO quantityDTO) {
+        if (quantityDTO == null) {
+            return;
+        }
+        this.resultValue = quantityDTO.getValue();
+        this.resultUnit = quantityDTO.getUnitName();
+        this.resultMeasurementType = quantityDTO.getMeasurementType();
     }
 }

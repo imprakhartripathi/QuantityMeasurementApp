@@ -7,91 +7,123 @@ import com.imprakhartripathi.qmaserver.equality.TemperatureUnit;
 import com.imprakhartripathi.qmaserver.equality.VolumeUnit;
 import com.imprakhartripathi.qmaserver.equality.WeightUnit;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.exception.QuantityMeasurementException;
+import com.imprakhartripathi.qmaserver.quantitymeasurement.model.OperationType;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.model.QuantityDTO;
+import com.imprakhartripathi.qmaserver.quantitymeasurement.model.QuantityMeasurementDTO;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.model.QuantityMeasurementEntity;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.model.QuantityModel;
-import com.imprakhartripathi.qmaserver.quantitymeasurement.repository.IQuantityMeasurementRepository;
+import com.imprakhartripathi.qmaserver.quantitymeasurement.repository.QuantityMeasurementRepository;
+import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.List;
 
+@Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
-    private final IQuantityMeasurementRepository repository;
+    private final QuantityMeasurementRepository repository;
 
-    public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repository) {
-        this.repository = Objects.requireNonNull(repository, "Repository must not be null");
+    public QuantityMeasurementServiceImpl(QuantityMeasurementRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public QuantityMeasurementEntity compare(QuantityDTO leftQuantity, QuantityDTO rightQuantity) {
-        return execute("COMPARE", leftQuantity, rightQuantity, () -> {
+    public QuantityMeasurementDTO compare(QuantityDTO leftQuantity, QuantityDTO rightQuantity) {
+        return execute(OperationType.COMPARE, leftQuantity, rightQuantity, () -> {
             boolean isEqual = compareQuantities(toModel(leftQuantity), toModel(rightQuantity));
-            return new QuantityMeasurementEntity("COMPARE", leftQuantity, rightQuantity, isEqual, null);
+            return new QuantityMeasurementEntity(OperationType.COMPARE, leftQuantity, rightQuantity, isEqual, null);
         });
     }
 
     @Override
-    public QuantityMeasurementEntity convert(QuantityDTO sourceQuantity, String targetUnitName) {
-        return execute("CONVERT", sourceQuantity, null, () -> {
+    public QuantityMeasurementDTO convert(QuantityDTO sourceQuantity, String targetUnitName) {
+        return execute(OperationType.CONVERT, sourceQuantity, null, () -> {
             QuantityModel<?> sourceModel = toModel(sourceQuantity);
             IMeasurable targetUnit = resolveTargetUnit(sourceModel.getUnit().getMeasurementType(), targetUnitName);
             Quantity<?> result = convertTo(sourceModel, targetUnit);
-            return new QuantityMeasurementEntity("CONVERT", sourceQuantity, toDto(result));
+            return new QuantityMeasurementEntity(OperationType.CONVERT, sourceQuantity, toDto(result));
         });
     }
 
     @Override
-    public QuantityMeasurementEntity add(QuantityDTO leftQuantity, QuantityDTO rightQuantity) {
+    public QuantityMeasurementDTO add(QuantityDTO leftQuantity, QuantityDTO rightQuantity) {
         return add(leftQuantity, rightQuantity, leftQuantity.getUnitName());
     }
 
     @Override
-    public QuantityMeasurementEntity add(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String targetUnitName) {
-        return execute("ADD", leftQuantity, rightQuantity, () -> {
+    public QuantityMeasurementDTO add(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String targetUnitName) {
+        return execute(OperationType.ADD, leftQuantity, rightQuantity, () -> {
             Quantity<?> result = addQuantities(toModel(leftQuantity), toModel(rightQuantity), targetUnitName);
-            return new QuantityMeasurementEntity("ADD", leftQuantity, rightQuantity, toDto(result));
+            return new QuantityMeasurementEntity(OperationType.ADD, leftQuantity, rightQuantity, toDto(result));
         });
     }
 
     @Override
-    public QuantityMeasurementEntity subtract(QuantityDTO leftQuantity, QuantityDTO rightQuantity) {
+    public QuantityMeasurementDTO subtract(QuantityDTO leftQuantity, QuantityDTO rightQuantity) {
         return subtract(leftQuantity, rightQuantity, leftQuantity.getUnitName());
     }
 
     @Override
-    public QuantityMeasurementEntity subtract(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String targetUnitName) {
-        return execute("SUBTRACT", leftQuantity, rightQuantity, () -> {
+    public QuantityMeasurementDTO subtract(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String targetUnitName) {
+        return execute(OperationType.SUBTRACT, leftQuantity, rightQuantity, () -> {
             Quantity<?> result = subtractQuantities(toModel(leftQuantity), toModel(rightQuantity), targetUnitName);
-            return new QuantityMeasurementEntity("SUBTRACT", leftQuantity, rightQuantity, toDto(result));
+            return new QuantityMeasurementEntity(OperationType.SUBTRACT, leftQuantity, rightQuantity, toDto(result));
         });
     }
 
     @Override
-    public QuantityMeasurementEntity divide(QuantityDTO leftQuantity, QuantityDTO rightQuantity) {
-        return execute("DIVIDE", leftQuantity, rightQuantity, () -> {
+    public QuantityMeasurementDTO divide(QuantityDTO leftQuantity, QuantityDTO rightQuantity) {
+        return execute(OperationType.DIVIDE, leftQuantity, rightQuantity, () -> {
             double result = divideQuantities(toModel(leftQuantity), toModel(rightQuantity));
-            return new QuantityMeasurementEntity("DIVIDE", leftQuantity, rightQuantity, null, result);
+            return new QuantityMeasurementEntity(OperationType.DIVIDE, leftQuantity, rightQuantity, null, result);
         });
     }
 
-    private QuantityMeasurementEntity execute(String operationType, QuantityDTO leftQuantity, QuantityDTO rightQuantity,
-                                              Operation operation) {
+    @Override
+    public List<QuantityMeasurementDTO> getOperationHistory(OperationType operationType) {
+        return QuantityMeasurementDTO.fromEntityList(repository.findByOperationTypeOrderByCreatedAtAsc(operationType));
+    }
+
+    @Override
+    public List<QuantityMeasurementDTO> getMeasurementHistory(String measurementType) {
+        return QuantityMeasurementDTO.fromEntityList(
+                repository.findByLeftMeasurementTypeOrderByCreatedAtAsc(measurementType.trim().toUpperCase()));
+    }
+
+    @Override
+    public long getOperationCount(OperationType operationType) {
+        return repository.countByOperationTypeAndErrorFalse(operationType);
+    }
+
+    @Override
+    public List<QuantityMeasurementDTO> getErroredHistory() {
+        return QuantityMeasurementDTO.fromEntityList(repository.findByErrorTrueOrderByCreatedAtAsc());
+    }
+
+    private QuantityMeasurementDTO execute(OperationType operationType, QuantityDTO leftQuantity, QuantityDTO rightQuantity,
+                                           Operation operation) {
         validateDto(leftQuantity);
-        if (!"CONVERT".equals(operationType)) {
+        if (operationType != OperationType.CONVERT) {
             validateDto(rightQuantity);
         }
         try {
-            QuantityMeasurementEntity entity = operation.perform();
-            return repository.save(entity);
+            return saveAndConvert(operation.perform());
         } catch (RuntimeException exception) {
             QuantityMeasurementEntity errorEntity = new QuantityMeasurementEntity(operationType, leftQuantity,
-                    rightQuantity, mapException(exception).getMessage());
-            return repository.save(errorEntity);
+                    rightQuantity, mapException(operationType, exception).getMessage());
+            repository.save(errorEntity);
+            throw mapException(operationType, exception);
         }
+    }
+
+    private QuantityMeasurementDTO saveAndConvert(QuantityMeasurementEntity entity) {
+        return QuantityMeasurementDTO.fromEntity(repository.save(entity));
     }
 
     private void validateDto(QuantityDTO quantityDTO) {
         if (quantityDTO == null) {
             throw new QuantityMeasurementException("Quantity input must not be null");
+        }
+        if (quantityDTO.getValue() == null) {
+            throw new QuantityMeasurementException("Quantity value must not be null");
         }
         if (Double.isNaN(quantityDTO.getValue()) || Double.isInfinite(quantityDTO.getValue())) {
             throw new QuantityMeasurementException("Quantity value must be a finite number");
@@ -213,11 +245,12 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         return false;
     }
 
-    private QuantityMeasurementException mapException(RuntimeException exception) {
+    private QuantityMeasurementException mapException(OperationType operationType, RuntimeException exception) {
         if (exception instanceof QuantityMeasurementException quantityMeasurementException) {
             return quantityMeasurementException;
         }
-        return new QuantityMeasurementException(exception.getMessage(), exception);
+        return new QuantityMeasurementException(operationType.name().toLowerCase() + " Error: " + exception.getMessage(),
+                exception);
     }
 
     @FunctionalInterface
