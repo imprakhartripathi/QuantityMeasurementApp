@@ -3,13 +3,17 @@ package com.imprakhartripathi.qmaserver.quantitymeasurement.auth;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.auth.dto.AuthResponse;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.auth.dto.LoginRequest;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.auth.dto.SignupRequest;
+import com.imprakhartripathi.qmaserver.quantitymeasurement.auth.dto.UpdateUserProfileRequest;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.auth.dto.UserProfileResponse;
+import com.imprakhartripathi.qmaserver.quantitymeasurement.model.QuantityMeasurementDTO;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.model.AuthProvider;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.model.UserEntity;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -72,5 +76,29 @@ public class AuthService {
     public UserEntity getUserByEmail(String email) {
         return userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new AuthFlowException("User not found"));
+    }
+
+    @Transactional
+    public UserProfileResponse updateProfile(String email, UpdateUserProfileRequest request) {
+        UserEntity user = getUserByEmail(email);
+        user.setName(request.getName().trim());
+        user.setPicture(normalizePicture(request.getPicture()));
+        UserEntity updatedUser = userRepository.save(user);
+        updatedUser.getHistory().size();
+        return UserProfileResponse.fromUser(updatedUser);
+    }
+
+    @Transactional(readOnly = true)
+    public List<QuantityMeasurementDTO> getHistoryByEmail(String email) {
+        UserEntity user = getUserByEmail(email);
+        user.getHistory().size();
+        return QuantityMeasurementDTO.fromEntityList(user.getHistory());
+    }
+
+    private String normalizePicture(String picture) {
+        if (picture == null || picture.isBlank()) {
+            return null;
+        }
+        return picture.trim();
     }
 }
