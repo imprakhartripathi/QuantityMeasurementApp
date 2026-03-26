@@ -12,7 +12,11 @@ import com.imprakhartripathi.qmaserver.quantitymeasurement.model.QuantityDTO;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.model.QuantityMeasurementDTO;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.model.QuantityMeasurementEntity;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.model.QuantityModel;
+import com.imprakhartripathi.qmaserver.quantitymeasurement.model.UserEntity;
 import com.imprakhartripathi.qmaserver.quantitymeasurement.repository.QuantityMeasurementRepository;
+import com.imprakhartripathi.qmaserver.quantitymeasurement.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +24,11 @@ import java.util.List;
 @Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
     private final QuantityMeasurementRepository repository;
+    private final UserRepository userRepository;
 
-    public QuantityMeasurementServiceImpl(QuantityMeasurementRepository repository) {
+    public QuantityMeasurementServiceImpl(QuantityMeasurementRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -115,7 +121,20 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     }
 
     private QuantityMeasurementDTO saveAndConvert(QuantityMeasurementEntity entity) {
+        findCurrentUser().ifPresent(entity::setUser);
         return QuantityMeasurementDTO.fromEntity(repository.save(entity));
+    }
+
+    private java.util.Optional<UserEntity> findCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return java.util.Optional.empty();
+        }
+        String email = authentication.getName();
+        if (email == null || "anonymousUser".equalsIgnoreCase(email)) {
+            return java.util.Optional.empty();
+        }
+        return userRepository.findByEmailIgnoreCase(email);
     }
 
     private void validateDto(QuantityDTO quantityDTO) {
