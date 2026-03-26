@@ -6,7 +6,7 @@ type AuthContextValue = {
   user: UserProfile | null
   loading: boolean
   isAuthenticated: boolean
-  refreshSession: () => Promise<void>
+  refreshSession: (showLoader?: boolean) => Promise<void>
   login: (email: string, password: string) => Promise<void>
   signup: (name: string, email: string, password: string, picture?: string) => Promise<void>
   logout: () => Promise<void>
@@ -20,7 +20,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const refreshSession = useCallback(async () => {
+  const refreshSession = useCallback(async (showLoader = false) => {
+    if (showLoader) {
+      setLoading(true)
+    }
     try {
       const profile = await authService.getSession()
       setUser(profile)
@@ -37,18 +40,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string) => {
-      const response = await authService.login({ email, password })
-      setUser(response.user)
+      await authService.login({ email, password })
+      await refreshSession(true)
     },
-    [],
+    [refreshSession],
   )
 
   const signup = useCallback(
     async (name: string, email: string, password: string, picture?: string) => {
-      const response = await authService.signup({ name, email, password, picture: picture || null })
-      setUser(response.user)
+      await authService.signup({ name, email, password, picture: picture || null })
+      await refreshSession(true)
     },
-    [],
+    [refreshSession],
   )
 
   const logout = useCallback(async () => {

@@ -5,6 +5,7 @@ import { SignupPage } from '../pages/SignupPage'
 import { DashboardPage } from '../pages/DashboardPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import { HistoryPage } from '../pages/HistoryPage'
+import { OAuthCallbackPage } from '../pages/OAuthCallbackPage'
 import { useAuth } from '../context/AuthContext'
 
 function HomeRedirect() {
@@ -21,6 +22,7 @@ export function AppRouter() {
       <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
 
       <Route element={<ProtectedLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />

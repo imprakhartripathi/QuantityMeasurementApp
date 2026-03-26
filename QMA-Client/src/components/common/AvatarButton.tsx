@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import fallbackAvatar from '../../assets/user.png'
 
 type AvatarButtonProps = {
   name: string
@@ -18,7 +19,7 @@ export function AvatarButton({ name, picture, onClick }: AvatarButtonProps) {
         .join(''),
     [name],
   )
-  const avatarSrc = !hasError ? picture || '/user.png' : null
+  const avatarSrc = !hasError ? picture || fallbackAvatar : null
 
   return (
     <button
