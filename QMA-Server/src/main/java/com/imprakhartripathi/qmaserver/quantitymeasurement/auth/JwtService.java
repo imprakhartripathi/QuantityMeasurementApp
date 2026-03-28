@@ -53,6 +53,10 @@ public class JwtService {
         return claims.getExpiration().after(new Date());
     }
 
+    public long getJwtExpirationMs() {
+        return jwtExpirationMs;
+    }
+
     private Claims extractClaims(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
