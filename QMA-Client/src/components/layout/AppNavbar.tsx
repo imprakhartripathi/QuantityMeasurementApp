@@ -1,45 +1,95 @@
-import { History, LogOut } from 'lucide-react'
+import { History, Home, LogOut } from 'lucide-react'
+import { useState } from 'react'
 import { AvatarButton } from '../common/AvatarButton'
 import { useAuth } from '../../context/AuthContext'
 
 type AppNavbarProps = {
+  onOpenHome: () => void
   onOpenProfile: () => void
   onOpenHistory: () => void
+  activePath: '/dashboard' | '/profile' | '/history'
 }
 
-export function AppNavbar({ onOpenProfile, onOpenHistory }: AppNavbarProps) {
-  const { user, logout } = useAuth()
+export function AppNavbar({ onOpenHome, onOpenProfile, onOpenHistory, activePath }: AppNavbarProps) {
+  const { user, logout, isLoggingOut } = useAuth()
+  const [confirmingLogout, setConfirmingLogout] = useState(false)
 
   return (
-    <header className="sticky top-3 z-20 mb-4 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-card backdrop-blur">
-      <div className="page-shell flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-slate-900">Quantity Measurement</h1>
-          <p className="text-xs text-slate-500">Convert, compare and calculate across units.</p>
+    <>
+      <header className="app-navbar">
+        <div className="app-navbar__inner">
+          <div className="app-navbar__brand">
+          <h1 className="app-navbar__title">Quantity Measurement</h1>
+            <p className="app-navbar__subtitle">Convert, compare and calculate across units.</p>
+          </div>
+
+          <div className="app-navbar__actions">
+            <button
+              type="button"
+              onClick={onOpenHome}
+              className={`icon-btn ${activePath === '/dashboard' ? 'icon-btn--active' : ''}`}
+              title="Home"
+              aria-current={activePath === '/dashboard' ? 'page' : undefined}
+            >
+              <Home size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={onOpenHistory}
+              className={`icon-btn ${activePath === '/history' ? 'icon-btn--active' : ''}`}
+              title="History"
+              aria-current={activePath === '/history' ? 'page' : undefined}
+            >
+              <History size={18} />
+            </button>
+
+            <AvatarButton
+              name={user?.name ?? 'User'}
+              picture={user?.picture}
+              onClick={onOpenProfile}
+              className={activePath === '/profile' ? 'avatar-btn--active' : ''}
+            />
+            <span className="app-user-name">{user?.name ?? 'User'}</span>
+
+            <button
+              type="button"
+              onClick={() => setConfirmingLogout(true)}
+              className="icon-btn icon-btn--danger"
+              title="Logout"
+              disabled={isLoggingOut}
+            >
+              <LogOut size={18} />
+            </button>
+          </div>
         </div>
+      </header>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={onOpenHistory}
-            className="inline-flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-600 transition hover:border-brand-200 hover:text-brand-700"
-            title="History"
-          >
-            <History size={18} />
-          </button>
-
-          <AvatarButton name={user?.name ?? 'User'} picture={user?.picture} onClick={onOpenProfile} />
-
-          <button
-            type="button"
-            onClick={() => void logout()}
-            className="inline-flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-600 transition hover:border-rose-200 hover:text-rose-600"
-            title="Logout"
-          >
-            <LogOut size={18} />
-          </button>
+      {confirmingLogout ? (
+        <div className="confirm-overlay" role="dialog" aria-modal="true" aria-label="Confirm logout">
+          <div className="confirm-card">
+            <h3>Sign out?</h3>
+            <p>You will need to sign in again to access your dashboard.</p>
+            <div className="confirm-actions">
+              <button
+                type="button"
+                className="confirm-btn confirm-btn--ghost"
+                onClick={() => setConfirmingLogout(false)}
+                disabled={isLoggingOut}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="confirm-btn confirm-btn--danger"
+                onClick={() => void logout()}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? 'Signing out...' : 'Yes, sign out'}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </header>
+      ) : null}
+    </>
   )
 }

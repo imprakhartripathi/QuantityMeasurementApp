@@ -5,8 +5,9 @@ import type { UserProfile } from '../types'
 type AuthContextValue = {
   user: UserProfile | null
   loading: boolean
+  isLoggingOut: boolean
   isAuthenticated: boolean
-  refreshSession: (showLoader?: boolean) => Promise<void>
+  refreshSession: (showLoader?: boolean) => Promise<UserProfile | null>
   login: (email: string, password: string) => Promise<void>
   signup: (name: string, email: string, password: string, picture?: string) => Promise<void>
   logout: () => Promise<void>
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const refreshSession = useCallback(async (showLoader = false) => {
     if (showLoader) {
@@ -26,9 +28,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       const profile = await authService.getSession()
-      setUser(profile)
+      const nextUser = profile ?? null
+      setUser(nextUser)
+      return nextUser
     } catch {
       setUser(null)
+      return null
     } finally {
       setLoading(false)
     }
@@ -41,6 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(
     async (email: string, password: string) => {
       await authService.login({ email, password })
+      sessionStorage.removeItem('qma_oauth_in_progress')
       await refreshSession(true)
     },
     [refreshSession],
@@ -49,20 +55,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = useCallback(
     async (name: string, email: string, password: string, picture?: string) => {
       await authService.signup({ name, email, password, picture: picture || null })
+      sessionStorage.removeItem('qma_oauth_in_progress')
       await refreshSession(true)
     },
     [refreshSession],
   )
 
   const logout = useCallback(async () => {
-    await authService.logout()
-    setUser(null)
+    setIsLoggingOut(true)
+    try {
+      await Promise.race([
+        authService.logout(),
+        new Promise<void>((resolve) => {
+          window.setTimeout(resolve, 1800)
+        }),
+      ])
+    } finally {
+      sessionStorage.removeItem('qma_oauth_in_progress')
+      localStorage.removeItem('qma_oauth_result')
+      if ('caches' in window) {
+        try {
+          void window.caches.keys().then((keys) => Promise.all(keys.map((key) => window.caches.delete(key))))
+        } catch {
+          // no-op
+        }
+      }
+      setUser(null)
+      setIsLoggingOut(false)
+    }
   }, [])
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       loading,
+      isLoggingOut,
       isAuthenticated: Boolean(user),
       refreshSession,
       login,
@@ -71,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       startGoogleLogin: authService.startGoogleLogin,
       setUser,
     }),
-    [user, loading, refreshSession, login, signup, logout],
+    [user, loading, isLoggingOut, refreshSession, login, signup, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

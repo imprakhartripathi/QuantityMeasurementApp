@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedLayout } from '../components/layout/ProtectedLayout'
 import { LoginPage } from '../pages/LoginPage'
@@ -16,12 +17,37 @@ function HomeRedirect() {
   return <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />
 }
 
+function PublicOnlyRoute({ children }: { children: ReactElement }) {
+  const { isAuthenticated, loading } = useAuth()
+  if (loading) {
+    return <div className="app-shell app-page">Loading...</div>
+  }
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />
+  }
+  return children
+}
+
 export function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<HomeRedirect />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
+      <Route
+        path="/login"
+        element={
+          <PublicOnlyRoute>
+            <LoginPage />
+          </PublicOnlyRoute>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <PublicOnlyRoute>
+            <SignupPage />
+          </PublicOnlyRoute>
+        }
+      />
       <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
 
       <Route element={<ProtectedLayout />}>

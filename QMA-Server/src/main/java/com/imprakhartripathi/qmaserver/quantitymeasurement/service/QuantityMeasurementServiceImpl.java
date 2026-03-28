@@ -17,6 +17,8 @@ import com.imprakhartripathi.qmaserver.quantitymeasurement.repository.QuantityMe
 import com.imprakhartripathi.qmaserver.quantitymeasurement.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -130,11 +132,32 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         if (authentication == null || !authentication.isAuthenticated()) {
             return java.util.Optional.empty();
         }
-        String email = authentication.getName();
+        String email = resolveEmail(authentication);
         if (email == null || "anonymousUser".equalsIgnoreCase(email)) {
             return java.util.Optional.empty();
         }
         return userRepository.findByEmailIgnoreCase(email);
+    }
+
+    private String resolveEmail(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof UserDetails userDetails) {
+            return userDetails.getUsername();
+        }
+        if (principal instanceof OAuth2User oauth2User) {
+            Object email = oauth2User.getAttribute("email");
+            if (email instanceof String emailString && !emailString.isBlank()) {
+                return emailString;
+            }
+        }
+
+        String authName = authentication.getName();
+        if (authName != null && authName.contains("@")) {
+            return authName;
+        }
+
+        return null;
     }
 
     private void validateDto(QuantityDTO quantityDTO) {

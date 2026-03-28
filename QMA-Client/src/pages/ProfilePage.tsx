@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { userService } from '../services/userService'
+import fallbackAvatar from '../assets/user.png'
 
 export function ProfilePage() {
   const { user, setUser, refreshSession } = useAuth()
@@ -13,21 +14,30 @@ export function ProfilePage() {
   useEffect(() => {
     setName(user?.name ?? '')
     setPicture(user?.picture ?? '')
+    setMessage('')
+    setError('')
   }, [user])
 
   if (!user) {
     return null
   }
 
+  const normalizedName = name.trim()
+  const normalizedPicture = picture.trim() || null
+  const hasChanges = normalizedName !== user.name || normalizedPicture !== (user.picture ?? null)
+
   const onSave = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (!hasChanges) {
+      return
+    }
     setSaving(true)
     setError('')
     setMessage('')
     try {
       const updated = await userService.updateMyProfile({
-        name,
-        picture: picture || null,
+        name: normalizedName,
+        picture: normalizedPicture,
       })
       setUser(updated)
       await refreshSession()
@@ -40,61 +50,82 @@ export function ProfilePage() {
   }
 
   return (
-    <section className="content-panel p-6">
-      <h2 className="text-xl font-semibold text-slate-900">Profile</h2>
-      <p className="mt-1 text-sm text-slate-500">Manage your account details.</p>
+    <section className="content-panel panel-pad page-panel page-panel--wide profile-page">
+      <h2 className="app-page-title">Profile</h2>
+      <p className="app-page-subtitle">Manage your account details.</p>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 p-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Current Details</h3>
-          <div className="mt-3 space-y-2 text-sm text-slate-700">
+      <div className="profile-grid">
+        <div className="sub-card">
+          <h3 className="panel-label">Current Details</h3>
+          <div style={{ marginTop: '0.8rem' }}>
+            <img
+              src={normalizedPicture ?? user.picture ?? fallbackAvatar}
+              alt={`${user.name} preview`}
+              style={{
+                height: '92px',
+                width: '92px',
+                borderRadius: '999px',
+                objectFit: 'cover',
+                border: '2px solid #fff',
+                boxShadow: '0 0 0 2px #d9e4f0',
+              }}
+            />
+          </div>
+          <div className="kv-list">
             <p>
-              <span className="font-semibold">Name:</span> {user.name}
+              <span style={{ fontWeight: 700 }}>Name:</span> {user.name}
             </p>
             <p>
-              <span className="font-semibold">Email:</span> {user.email}
+              <span style={{ fontWeight: 700 }}>Email:</span> {user.email}
             </p>
             <p>
-              <span className="font-semibold">Provider:</span> {user.provider}
+              <span style={{ fontWeight: 700 }}>Provider:</span> {user.provider}
             </p>
             <p>
-              <span className="font-semibold">History Count:</span> {user.history.length}
+              <span style={{ fontWeight: 700 }}>History Count:</span> {user.history.length}
             </p>
           </div>
         </div>
 
-        <form className="rounded-2xl border border-slate-200 p-4" onSubmit={onSave}>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Edit Profile</h3>
-          <label className="mt-3 block text-sm">
-            <span className="mb-1 block text-slate-600">Name</span>
-            <input
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-brand-500"
-              required
-            />
-          </label>
+        <form className="sub-card" onSubmit={onSave}>
+          <h3 className="panel-label">Edit Profile</h3>
+          <div className="form-stack">
+            <label>
+              <span className="panel-label" style={{ display: 'block', marginBottom: '0.45rem' }}>
+                Name
+              </span>
+              <input
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                className="modern-field"
+                required
+              />
+            </label>
 
-          <label className="mt-3 block text-sm">
-            <span className="mb-1 block text-slate-600">Picture URL</span>
-            <input
-              value={picture}
-              onChange={(event) => setPicture(event.target.value)}
-              placeholder="https://example.com/avatar.png"
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-brand-500"
-            />
-          </label>
+            <label>
+              <span className="panel-label" style={{ display: 'block', marginBottom: '0.45rem' }}>
+                Picture URL
+              </span>
+              <input
+                value={picture}
+                onChange={(event) => setPicture(event.target.value)}
+                placeholder="https://example.com/avatar.png"
+                className="modern-field"
+              />
+            </label>
+          </div>
 
           <button
             type="submit"
-            disabled={saving}
-            className="mt-4 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-60"
+            disabled={saving || !hasChanges}
+            className="modern-btn-primary"
+            style={{ marginTop: '1rem' }}
           >
             {saving ? 'Saving...' : 'Save changes'}
           </button>
 
-          {message ? <p className="mt-3 rounded-lg bg-emerald-50 p-2 text-sm text-emerald-700">{message}</p> : null}
-          {error ? <p className="mt-3 rounded-lg bg-rose-50 p-2 text-sm text-rose-700">{error}</p> : null}
+          {message ? <p className="state-message state-message--ok">{message}</p> : null}
+          {error ? <p className="state-message state-message--error">{error}</p> : null}
         </form>
       </div>
     </section>

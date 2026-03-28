@@ -7,9 +7,11 @@ type SignupInput = { name: string; email: string; password: string; picture?: st
 export const authService = {
   login: (payload: LoginInput) => apiClient.post<AuthResponse>('/api/v1/auth/login', payload),
   signup: (payload: SignupInput) => apiClient.post<AuthResponse>('/api/v1/auth/signup', payload),
-  getSession: () => apiClient.get<UserProfile>('/api/v1/auth/session'),
+  getSession: () => apiClient.get<UserProfile | undefined>('/api/v1/auth/session'),
   logout: () => apiClient.post<void>('/api/v1/auth/logout'),
   startGoogleLogin: () => {
-    window.location.href = `${API_BASE_URL}/oauth2/authorization/google`
+    sessionStorage.setItem('qma_oauth_in_progress', '1')
+    const oauthUrl = `${API_BASE_URL}/oauth2/authorization/google`
+    window.location.assign(oauthUrl)
   },
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { UserRoundPlus } from 'lucide-react'
+import '../styles/auth.scss'
 
 export function SignupPage() {
   const { isAuthenticated, signup, startGoogleLogin } = useAuth()
@@ -37,97 +39,79 @@ export function SignupPage() {
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      <aside className="hidden bg-gradient-to-br from-brand-900 via-brand-700 to-brand-500 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div>
-          <p className="text-sm uppercase tracking-[0.2em] text-brand-100">Create Your Account</p>
-          <h1 className="mt-4 text-4xl font-semibold leading-tight">
-            Get a personal quantity workspace with operation history.
-          </h1>
+    <div className="auth-page">
+      <aside className="auth-hero auth-hero--signup">
+        <div className="auth-hero__badge">
+          <UserRoundPlus size={16} />
+          <span>Create account</span>
         </div>
-        <p className="max-w-md text-sm text-brand-50">
-          Use local auth or Google OAuth, then run conversions and arithmetic with full history tracking.
-        </p>
+        <h1>Build your personal workspace in under a minute.</h1>
+        <p>Use manual signup or Google OAuth and access your full quantity operation history instantly.</p>
       </aside>
 
-      <main className="flex items-center justify-center px-4 py-10">
-        <div className="content-panel w-full max-w-md p-7">
-          <h2 className="text-2xl font-semibold text-slate-900">Create account</h2>
-          <p className="mt-1 text-sm text-slate-500">Set up your profile and start measuring.</p>
+      <main className="auth-main">
+        <div className="auth-card">
+          <h2>Create account</h2>
+          <p className="auth-subtitle">Set up your profile and start measuring.</p>
 
-          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-            <label className="block text-sm">
-              <span className="mb-1 block text-slate-600">Name</span>
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <label className="auth-field">
+              <span>Name</span>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-brand-500"
                 placeholder="Your full name"
               />
             </label>
 
-            <label className="block text-sm">
-              <span className="mb-1 block text-slate-600">Email</span>
+            <label className="auth-field">
+              <span>Email</span>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-brand-500"
                 placeholder="you@example.com"
               />
             </label>
 
-            <label className="block text-sm">
-              <span className="mb-1 block text-slate-600">Password</span>
+            <label className="auth-field">
+              <span>Password</span>
               <input
                 type="password"
                 required
                 minLength={8}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-brand-500"
                 placeholder="At least 8 characters"
               />
             </label>
 
-            <label className="block text-sm">
-              <span className="mb-1 block text-slate-600">Picture URL (optional)</span>
+            <label className="auth-field">
+              <span>Picture URL (optional)</span>
               <input
                 type="url"
                 value={picture}
                 onChange={(event) => setPicture(event.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-brand-500"
                 placeholder="https://example.com/avatar.png"
               />
             </label>
 
-            {error ? <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600">{error}</p> : null}
+            {error ? <p className="auth-error">{error}</p> : null}
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full rounded-xl bg-slate-900 px-4 py-2 font-medium text-white transition hover:bg-slate-800 disabled:opacity-60"
-            >
+            <button type="submit" disabled={submitting} className="auth-btn auth-btn--primary">
               {submitting ? 'Creating account...' : 'Create account'}
             </button>
           </form>
 
-          <button
-            type="button"
-            onClick={startGoogleLogin}
-            className="mt-3 w-full rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 transition hover:border-brand-200 hover:text-brand-700"
-          >
+          <button type="button" onClick={startGoogleLogin} className="auth-btn auth-btn--google">
             Continue with Google
           </button>
 
-          <p className="mt-4 text-center text-sm text-slate-500">
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium text-brand-700">
-              Login
-            </Link>
+          <p className="auth-footer">
+            Already have an account? <Link to="/login">Login</Link>
           </p>
         </div>
       </main>

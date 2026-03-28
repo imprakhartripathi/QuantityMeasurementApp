@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
+const defaultApiBaseUrl = `http://${window.location.hostname}:8080`
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? defaultApiBaseUrl
 
 type RequestOptions = RequestInit & {
   auth?: boolean
@@ -16,18 +17,35 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   })
 
   if (!response.ok) {
-    const maybeJson = await response
-      .json()
-      .catch(() => ({ message: response.statusText }))
+    const raw = await response.text().catch(() => '')
+    const maybeJson = raw
+      ? (() => {
+          try {
+            return JSON.parse(raw)
+          } catch {
+            return { message: raw }
+          }
+        })()
+      : { message: response.statusText }
     const message = maybeJson?.message ?? 'Request failed'
     throw new Error(message)
   }
 
-  if (response.status === 204) {
+  if (response.status === 204 || response.status === 205) {
     return undefined as T
   }
 
-  return (await response.json()) as T
+  const contentType = response.headers.get('content-type') ?? ''
+  if (!contentType.includes('application/json')) {
+    return undefined as T
+  }
+
+  const raw = await response.text()
+  if (!raw) {
+    return undefined as T
+  }
+
+  return JSON.parse(raw) as T
 }
 
 export const apiClient = {

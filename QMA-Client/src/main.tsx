@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import './styles/tailwind.css'
 import './styles/main.scss'
+import './styles/app-shell.scss'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

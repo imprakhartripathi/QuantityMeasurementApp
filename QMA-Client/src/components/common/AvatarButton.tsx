@@ -5,9 +5,10 @@ type AvatarButtonProps = {
   name: string
   picture?: string | null
   onClick?: () => void
+  className?: string
 }
 
-export function AvatarButton({ name, picture, onClick }: AvatarButtonProps) {
+export function AvatarButton({ name, picture, onClick, className = '' }: AvatarButtonProps) {
   const [hasError, setHasError] = useState(false)
   const initials = useMemo(
     () =>
@@ -22,23 +23,15 @@ export function AvatarButton({ name, picture, onClick }: AvatarButtonProps) {
   const avatarSrc = !hasError ? picture || fallbackAvatar : null
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="h-10 w-10 overflow-hidden rounded-full border-2 border-slate-200 shadow-sm"
-      title="Profile"
-    >
+    <button type="button" onClick={onClick} className={`avatar-btn ${className}`.trim()} title="Profile">
       {avatarSrc ? (
         <img
           src={avatarSrc}
           alt={`${name} profile`}
-          className="h-full w-full object-cover"
           onError={() => setHasError(true)}
         />
       ) : (
-        <span className="flex h-full w-full items-center justify-center bg-brand-100 text-xs font-bold text-brand-900">
-          {initials || 'U'}
-        </span>
+        <span className="avatar-fallback">{initials || 'U'}</span>
       )}
     </button>
   )

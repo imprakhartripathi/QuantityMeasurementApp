@@ -23,31 +23,31 @@ export function HistoryPage() {
   }, [])
 
   return (
-    <section className="content-panel p-6">
-      <h2 className="text-xl font-semibold text-slate-900">History</h2>
-      <p className="mt-1 text-sm text-slate-500">Your previous quantity operations.</p>
+    <section className="content-panel panel-pad page-panel page-panel--wide history-page">
+      <h2 className="app-page-title">History</h2>
+      <p className="app-page-subtitle">Your previous quantity operations.</p>
 
       {loading ? <p className="mt-4 text-sm text-slate-500">Loading history...</p> : null}
-      {error ? <p className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-700">{error}</p> : null}
+      {error ? <p className="state-message state-message--error">{error}</p> : null}
 
       {!loading && !error && history.length === 0 ? (
         <p className="mt-4 text-sm text-slate-500">No history found yet.</p>
       ) : null}
 
-      <div className="mt-4 space-y-3">
+      <div className="history-list">
         {history.map((item) => (
-          <article key={item.id} className="rounded-xl border border-slate-200 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="font-semibold text-slate-700">{item.operation}</p>
-              <p className="text-xs text-slate-500">
+          <article key={item.id} className="history-item">
+            <div className="history-head">
+              <p className="history-op">{item.operation}</p>
+              <p className="history-time">
                 {item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}
               </p>
             </div>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="history-line">
               Input: {item.thisValue} {item.thisUnit} ({item.thisMeasurementType}) and {item.thatValue}{' '}
               {item.thatUnit} ({item.thatMeasurementType})
             </p>
-            <p className="mt-1 text-sm text-slate-700">
+            <p className="history-line">
               Result:{' '}
               {item.error
                 ? item.errorMessage
