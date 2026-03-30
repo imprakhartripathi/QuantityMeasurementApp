@@ -1,0 +1,11 @@
+spring.application.name=qma-service
+quantity.measurement.repository.type=database
+quantity.measurement.database.url=jdbc:postgresql://127.0.0.1:5432/quantity_measurement
+quantity.measurement.database.username=user
+quantity.measurement.database.password=pass
+quantity.measurement.database.pool.initial-size=1
+quantity.measurement.database.pool.max-size=5
+quantity.measurement.database.pool.connection-timeout-millis=5000
+quantity.measurement.database.schema-location=db/schema.sql
+
+logging.level.root=INFO
