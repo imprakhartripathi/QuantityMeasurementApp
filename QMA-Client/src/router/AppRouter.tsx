@@ -7,7 +7,7 @@ import { DashboardPage } from '../pages/DashboardPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import { HistoryPage } from '../pages/HistoryPage'
 import { OAuthCallbackPage } from '../pages/OAuthCallbackPage'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
 
 function HomeRedirect() {
   const { isAuthenticated, loading } = useAuth()

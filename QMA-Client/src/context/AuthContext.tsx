@@ -1,21 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { authService } from '../services/authService'
 import type { UserProfile } from '../types'
-
-type AuthContextValue = {
-  user: UserProfile | null
-  loading: boolean
-  isLoggingOut: boolean
-  isAuthenticated: boolean
-  refreshSession: (showLoader?: boolean) => Promise<UserProfile | null>
-  login: (email: string, password: string) => Promise<void>
-  signup: (name: string, email: string, password: string, picture?: string) => Promise<void>
-  logout: () => Promise<void>
-  startGoogleLogin: () => void
-  setUser: (user: UserProfile | null) => void
-}
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined)
+import { AuthContext, type AuthContextValue } from './auth-context'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -102,12 +88,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used inside AuthProvider')
-  }
-  return context
 }

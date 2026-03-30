@@ -1,7 +1,7 @@
 import { History, Home, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { AvatarButton } from '../common/AvatarButton'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/useAuth'
 
 type AppNavbarProps = {
   onOpenHome: () => void

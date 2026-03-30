@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { AppNavbar } from './AppNavbar'
 import { AppFooter } from './AppFooter'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/useAuth'
 
 export function ProtectedLayout() {
   const { isAuthenticated, loading, isLoggingOut } = useAuth()
