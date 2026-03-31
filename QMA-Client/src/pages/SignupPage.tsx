@@ -5,7 +5,7 @@ import { UserRoundPlus } from 'lucide-react'
 import '../styles/auth.scss'
 
 export function SignupPage() {
-  const { isAuthenticated, signup, startGoogleLogin } = useAuth()
+  const { isAuthenticated, signup } = useAuth()
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -46,7 +46,7 @@ export function SignupPage() {
           <span>Create account</span>
         </div>
         <h1>Build your personal workspace in under a minute.</h1>
-        <p>Use manual signup or Google OAuth and access your full quantity operation history instantly.</p>
+        <p>Use manual signup and access your full quantity operation history instantly.</p>
       </aside>
 
       <main className="auth-main">
@@ -106,9 +106,11 @@ export function SignupPage() {
             </button>
           </form>
 
+          {/* Temporarily disabled OAuth entrypoint
           <button type="button" onClick={startGoogleLogin} className="auth-btn auth-btn--google">
             Continue with Google
           </button>
+          */}
 
           <p className="auth-footer">
             Already have an account? <Link to="/login">Login</Link>
