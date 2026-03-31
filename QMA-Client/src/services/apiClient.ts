@@ -1,5 +1,8 @@
 const defaultApiBaseUrl = `http://${window.location.hostname}:4000`
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? defaultApiBaseUrl
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL
+const API_BASE_URL = configuredApiBaseUrl && configuredApiBaseUrl.trim() !== ''
+  ? configuredApiBaseUrl
+  : defaultApiBaseUrl
 
 type RequestOptions = RequestInit & {
   auth?: boolean
