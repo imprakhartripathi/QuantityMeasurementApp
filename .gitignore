@@ -18,3 +18,4 @@ coverage
 *.class
 *.jar   
 logs/
+.codex
