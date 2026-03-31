@@ -1,8 +1,4 @@
-const defaultApiBaseUrl = `http://${window.location.hostname}:4000`
-const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL
-const API_BASE_URL = configuredApiBaseUrl && configuredApiBaseUrl.trim() !== ''
-  ? configuredApiBaseUrl
-  : defaultApiBaseUrl
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000').replace(/\/+$/, '')
 
 type RequestOptions = RequestInit & {
   auth?: boolean
