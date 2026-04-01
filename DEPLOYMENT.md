@@ -19,12 +19,14 @@ Set at least:
 - `QMA_GOOGLE_AUTH_REDIRECT_URI`
 - `QMA_CORS_ALLOWED_ORIGINS`
 - `QMA_COOKIE_SECURE=true` (for HTTPS)
+- `VITE_API_BASE_URL` (leave empty when using bundled qma-client nginx proxy)
 
 Important: Google OAuth Console must include the same redirect URL as `QMA_GOOGLE_AUTH_REDIRECT_URI`.
 
 URL mode notes:
 - Local JVM mode uses `QMA_AUTH_BASE_URL_LOCAL` and `QMA_SERVICE_BASE_URL_LOCAL`
 - Docker mode uses `QMA_DOCKER_AUTH_BASE_URL` and `QMA_DOCKER_SERVICE_BASE_URL`
+- Docker frontend (`qma-client`) proxies `/api/*` to `qma-api` internally, so frontend can call same-origin `/api` without CORS/mixed-content issues.
 
 ## 2) Local Docker run (build from source)
 ```bash
