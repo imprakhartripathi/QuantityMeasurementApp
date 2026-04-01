@@ -1,17 +1,6 @@
-type RuntimeConfig = {
-  VITE_API_BASE_URL?: string
-}
+import { API_BASE_URL } from '../env'
 
-declare global {
-  interface Window {
-    __QMA_CONFIG__?: RuntimeConfig
-  }
-}
-
-const runtimeApiBaseUrl =
-  typeof window !== 'undefined' ? window.__QMA_CONFIG__?.VITE_API_BASE_URL : undefined
-
-const API_BASE_URL = (runtimeApiBaseUrl ?? import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '')
+const baseUrl = API_BASE_URL.replace(/\/+$/, '')
 
 type RequestOptions = RequestInit & {
   auth?: boolean
@@ -19,7 +8,7 @@ type RequestOptions = RequestInit & {
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { auth = true, headers, ...rest } = options
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${baseUrl}${path}`, {
     ...rest,
     credentials: auth ? 'include' : 'same-origin',
     headers: {
@@ -69,4 +58,4 @@ export const apiClient = {
     request<T>(path, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
 }
 
-export { API_BASE_URL }
+export { baseUrl as API_BASE_URL }
