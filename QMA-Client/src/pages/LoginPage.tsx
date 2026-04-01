@@ -5,7 +5,7 @@ import { Sparkles } from 'lucide-react'
 import '../styles/auth.scss'
 
 export function LoginPage() {
-  const { isAuthenticated, login } = useAuth()
+  const { isAuthenticated, login, startGoogleLogin } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -77,11 +77,9 @@ export function LoginPage() {
             </button>
           </form>
 
-          {/* Temporarily disabled OAuth entrypoint
           <button type="button" onClick={startGoogleLogin} className="auth-btn auth-btn--google">
             Continue with Google
           </button>
-          */}
 
           <p className="auth-footer">
             New here? <Link to="/signup">Create account</Link>

@@ -16,6 +16,7 @@ Usage:
   ./start-microservices.sh docker         # Docker mode (frontend + all services + postgres), build images
   ./start-microservices.sh docker-deploy  # Docker mode pull prebuilt images and run
   ./start-microservices.sh stop           # Stop docker stack
+  ./start-microservices.sh clean          # Clean docker cached images (prune)
 EOF
 }
 
@@ -248,6 +249,17 @@ run_docker_stop() {
   echo "Docker stack stopped."
 }
 
+run_docker_clean() {
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "Docker is not installed or not in PATH."
+    exit 1
+  fi
+
+  echo "Cleaning docker cached images..."
+  docker image prune -a -f
+  echo "Docker image cache cleaned."
+}
+
 case "${MODE}" in
   local)
     run_local
@@ -260,6 +272,9 @@ case "${MODE}" in
     ;;
   stop)
     run_docker_stop
+    ;;
+  clean)
+    run_docker_clean
     ;;
   *)
     print_usage
