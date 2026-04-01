@@ -11,8 +11,7 @@ declare global {
 const runtimeApiBaseUrl =
   typeof window !== 'undefined' ? window.__QMA_CONFIG__?.VITE_API_BASE_URL : undefined
 
-const API_BASE_URL = (runtimeApiBaseUrl || import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000')
-  .replace(/\/+$/, '')
+const API_BASE_URL = (runtimeApiBaseUrl ?? import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '')
 
 type RequestOptions = RequestInit & {
   auth?: boolean
